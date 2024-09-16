@@ -21,3 +21,56 @@ model user{
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model admin{
+  id String @id @default(uuid())
+  email String @unique
+  fullName String
+  password String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model books{
+  id String @id @default(uuid())
+  title String
+  author String
+  description String
+  category Category
+  available Int
+  publication DateTime
+  image String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Category {
+  FICTIONAL
+  NON_FICTIONAL
+  BIOGRAPHY
+  HISTORY
+  SCIENCE
+  MATH
+  PHILOSOPHY
+  OTHER
+}
+
+model Transactions{
+  id String @id @default(uuid())
+  userId String
+  bookId String
+  Issue_date DateTime
+  Return_date DateTime
+  Fine Int
+  status TransactionStatus
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum TransactionStatus {
+  ISSUED
+  PENDING
+  RETURNED
+  LOST
+}
+

@@ -38,7 +38,7 @@ app.use('/api/v1/post/*', async(c,next) => {
 
 // here c stand for context
 // here env stand for environment variables
-app.post('/api/v1/signup', async(c) => {
+app.post('/api/v1/users/auth/signup', async(c) => {
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
 }).$extends(withAccelerate());
@@ -73,7 +73,7 @@ app.post('/api/v1/signup', async(c) => {
 });
 
 // Signin Route
-app.post('/api/v1/signin',async(c)=>
+app.post('/api/v1/users/auth/signin',async(c)=>
 {
       const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
@@ -107,6 +107,11 @@ app.post('/api/v1/signin',async(c)=>
     });
 
 });
-  
+
+
+
+
+// 
+
 
 export default app
