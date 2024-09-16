@@ -14,6 +14,7 @@ const app = new Hono<{
   };
 }>();
 
+// middleware to verify the jwt token
 app.use('/api/v1/post/*', async(c,next) => {
     // get the header from Context
     // verify the header using jwt verify
@@ -22,12 +23,12 @@ app.use('/api/v1/post/*', async(c,next) => {
     const header=c.req.header("authorization") || "";
     const token=header.split(" ")[1];
     const verifiedHeader=await verify(token,c.env.JWT_SECRET);
-    if(!verifiedHeader.id)
+    if(!verifiedHeader?.id)
     {
-      c.status(401);
       return c.json({
         status:401,
-        message:"Unauthorized Access to the application"
+        message:"Unauthorized Access to the application",
+        data:null
       });
     }
     // adding the userId (payload) to the context
@@ -44,19 +45,19 @@ app.post('/api/v1/signup', async(c) => {
 
   const body=await c.req.json();
   // c.req.json() returns a promise so we have to await it
-  const reponse=await prisma.user.create({
+  const response=await prisma.user.create({
     data:{
       email:body.email,
       fullName:body.fullName,
       password:body.password
     }
   });
-  if(!reponse){
+  if(!response){
     return c.text('Internal Server error occured while signup');
   }
 
   const payload={
-   id:reponse.id,
+   id:response.id,
   };
   const secret=c.env.JWT_SECRET;
   const token=await sign(payload,secret);
