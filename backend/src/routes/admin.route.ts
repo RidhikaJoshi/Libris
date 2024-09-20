@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { PrismaClient, Category } from '@prisma/client/edge'
+import { PrismaClient, Category,TransactionStatus } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import { sign } from 'hono/jwt'
 import jwtVerify from '../utils/jwtVerify'
@@ -321,5 +321,142 @@ router.get('/findbooks', async (c) => {
     data: response
   });
 });
+
+// # Get all transactions
+router.get('/transactions',jwtVerify,async(c)=>
+{
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+
+  const response=await prisma.transactions.findMany();
+  if(!response)
+  {
+    return c.text("Internal server error occured while fetching transactions");
+  }
+  return c.json({
+    status:200,
+    message:"Transactions fetched successfully",
+    data:response
+  });
+});
+
+router.put('/return/:transactionId', jwtVerify, async (c) => {
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+
+  const transactionId = c.req.param('transactionId');
+  const { status } = await c.req.json(); // Expecting the new status from the request body
+
+  const FINE_PER_DAY = 10; // Example fine amount per day
+
+  // Ensure the status provided is one of the valid options
+  const validStatuses = [TransactionStatus.TAKEN, TransactionStatus.RETURNED, TransactionStatus.LOST];
+  if (!validStatuses.includes(status)) {
+    return c.json({
+      status: 400,
+      message: 'Invalid status. Status must be TAKEN, RETURNED, or LOST.',
+      data: null,
+    });
+  }
+
+  try {
+    // Start a transaction
+    const result = await prisma.$transaction(async (tx) => {
+      // Find the transaction by id
+      const transaction = await tx.transactions.findUnique({
+        where: {
+          id: transactionId,
+        },
+      });
+
+      if (!transaction) {
+        throw new Error('Transaction not found');
+      }
+
+      // Find the associated book by bookId
+      const book = await tx.books.findUnique({
+        where: {
+          id: transaction.bookId,
+        },
+      });
+
+      if (!book) {
+        throw new Error('Associated book not found');
+      }
+
+      // Initialize fine to 0
+      let fine = 0;
+
+      // If the status is RETURNED, calculate the fine if it's past the due date
+      if (status === TransactionStatus.RETURNED) {
+        const currentDate = new Date();
+        const returnDate = new Date(transaction.Return_date);
+
+        if (currentDate > returnDate) {
+          const daysLate = Math.ceil(
+            (currentDate.getTime() - returnDate.getTime()) / (1000 * 60 * 60 * 24)
+          );
+          fine = daysLate * FINE_PER_DAY; // Calculate fine based on the number of late days
+        }
+
+        // Increment the available count since the book is returned
+        await tx.books.update({
+          where: {
+            id: transaction.bookId,
+          },
+          data: {
+            available: {
+              increment: 1,
+            },
+          },
+        });
+      } else if (status === TransactionStatus.LOST) {
+        // If the book is lost, decrement the total copies and available copies
+        await tx.books.update({
+          where: {
+            id: transaction.bookId,
+          },
+          data: {
+            totalCopies: {
+              decrement: 1,
+            },
+          },
+        });
+        fine=1000;
+      }
+
+      // Update the transaction with the new status and fine if applicable
+      const updatedTransaction = await tx.transactions.update({
+        where: {
+          id: transactionId,
+        },
+        data: {
+          status: status,
+          Fine: fine, // Add the calculated fine to the transaction
+          Return_date: status === TransactionStatus.RETURNED ? new Date() : transaction.Return_date,
+        },
+      });
+
+      return updatedTransaction;
+    });
+
+    // Return success response
+    return c.json({
+      status:200,
+      message:"Transaction updated successfully",
+      data:result
+    });
+  } catch (error) {
+    return c.json({
+      status:500,
+      message:"Internal server error occured while updating transaction",
+      data:null
+    }); 
+  }
+});
+
+
 
 export default router;

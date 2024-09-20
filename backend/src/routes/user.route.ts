@@ -195,7 +195,7 @@ router.post('/issue/:bookId', jwtVerify, async (c) => {
           },
         }
       });
-      if(userBooks>3)
+      if(userBooks>=3)
       {
         throw new Error("User has already issued 3 books");
       }
@@ -239,6 +239,31 @@ router.post('/issue/:bookId', jwtVerify, async (c) => {
       data: null,
     });
   }
+});
+
+// # Get all transactions of a user
+router.get('/transactions',jwtVerify,async(c)=>
+{
+    const prisma = new PrismaClient({
+      datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    const userId=c.get('userId');
+    const response=await prisma.transactions.findMany({
+      where:{
+        userId:userId
+
+      }
+    });
+    if(!response)
+    {
+      return c.text("Internal server error occurred while fetching transactions");
+    }
+    return c.json({
+      status:200,
+      message:"Transactions fetched successfully",
+      data:response
+    });
 });
 
 export default router;
