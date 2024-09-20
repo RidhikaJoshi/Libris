@@ -62,16 +62,17 @@ model Transactions{
   bookId String
   Issue_date DateTime
   Return_date DateTime
-  Fine Int
+  Fine Int @default(0)
   status TransactionStatus
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 enum TransactionStatus {
-  ISSUED
-  PENDING
-  RETURNED
-  LOST
+  ISSUED    // Book has been issued online by the user
+  TAKEN    // User has physically collected the book from the library
+  RETURNED  // Book has been returned to the library
+  LOST       // Book has been lost by the user
 }
+
 
