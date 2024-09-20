@@ -1,8 +1,9 @@
 import { Hono } from 'hono'
-import { PrismaClient } from '@prisma/client/edge'
+import { PrismaClient, Category,TransactionStatus } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import { sign } from 'hono/jwt'
 import passwordHashing from '../utils/passwordHashing'
+import jwtVerify from '../utils/jwtVerify'
 
 // defining the type of environment variables whenever you initialize the the app using hono
 const router = new Hono<{
@@ -55,9 +56,9 @@ router.post('/signup', async(c) => {
   });
   
   // Signin Route
-  router.post('/signin',async(c)=>
+router.post('/signin',async(c) =>
   {
-        const prisma = new PrismaClient({
+      const prisma = new PrismaClient({
           datasourceUrl: c.env.DATABASE_URL,
       }).$extends(withAccelerate());
   
@@ -89,7 +90,155 @@ router.post('/signup', async(c) => {
         data:token
       });
   
-  });
+});
   
+//  # Get all available books
+router.get('/books',async(c) =>
+{
+  const prisma = new PrismaClient({
+      datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
 
-  export default router;
+  const response=await prisma.books.findMany({});
+  if(!response)
+  {
+    return c.text("Internal server error occurred while fetching books");
+  }
+  return c.json({
+    status:200,
+    message:"Books fetched successfully",
+    data:response
+    })
+});
+
+//  # Get details of a specific book by ID
+router.get('/books/:id',async(c)=>
+{
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    const bookId=c.req.param('id');
+    const response=await prisma.books.findUnique({
+      where:{
+        id:bookId
+      }
+    });
+    if(!response)
+    {
+      return c.text("Internal Server error occurred while fetching book details");
+    }
+    return c.json({
+      status:200,
+      message:"Book details fetched successfully",
+      data:response
+    })
+})
+
+// # Get books by category
+router.get('/books/category/:category',async(c)=>
+{
+    const prisma = new PrismaClient({
+      datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+
+  const findByCategory=c.req.param('category') as Category;
+  const response=await prisma.books.findMany({
+    where:{
+      category:findByCategory
+    }
+  });
+  if(!response)
+  {
+    return c.text("Internal server error occurred while fetching books by category");
+  }
+  return c.json({
+    status:200,
+    message:"Books fetched successfully",
+    data:response
+  });
+
+});
+
+// # Issue a book (generate a transaction)
+router.post('/issue/:bookId', jwtVerify, async (c) => {
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+
+  const bookId = c.req.param('bookId');
+  const userId = c.get('userId');
+
+  try {
+    // Start a transaction
+    const result = await prisma.$transaction(async (tx) => {
+      // Find the book by id
+      const book = await tx.books.findUnique({
+        where: {
+          id: bookId,
+        },
+      });
+
+      if (!book) {
+        throw new Error('Book not found'); // Throwing error to roll back the transaction
+      }
+
+      if (book.available <= 0) {
+        throw new Error('Book is out of stock');
+      }
+      // checking if user has more than 3 books issued
+      const userBooks=await tx.transactions.count({
+        where:{
+          userId:userId,
+          status: {
+            in: [TransactionStatus.ISSUED, TransactionStatus.TAKEN, TransactionStatus.LOST], // Correct status check
+          },
+        }
+      });
+      if(userBooks>3)
+      {
+        throw new Error("User has already issued 3 books");
+      }
+
+      // Issue the book (create a transaction record)
+      const transaction = await tx.transactions.create({
+        data: {
+          bookId: bookId,
+          userId: userId,
+          Issue_date: new Date(),
+          Return_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Return date set to 7 days later
+          status: TransactionStatus.ISSUED,
+        },
+      });
+
+      // Reduce the number of available books
+      await tx.books.update({
+        where: {
+          id: bookId,
+        },
+        data: {
+          available: book.available - 1,
+        },
+      });
+
+      // Return the transaction details if successful
+      return transaction;
+    });
+
+    // Return a success response if the transaction succeeds
+    return c.json({
+      status: 200,
+      message: 'Book issued successfully',
+      data: result,
+    });
+  } catch (error) {
+    // Handle any error by returning a proper message
+    return c.json({
+      status: 500,
+      message: error instanceof Error ? error.message : 'Internal server error occurred while issuing the book',
+      data: null,
+    });
+  }
+});
+
+export default router;
