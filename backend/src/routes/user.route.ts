@@ -2,6 +2,7 @@ import { Hono } from 'hono'
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import { sign } from 'hono/jwt'
+import passwordHashing from '../utils/passwordHashing'
 
 // defining the type of environment variables whenever you initialize the the app using hono
 const router = new Hono<{
@@ -18,19 +19,14 @@ const router = new Hono<{
 
 // here c stand for context
 // here env stand for environment variables
-router.post('/api/v1/users/auth/signup', async(c) => {
+router.post('/signup', async(c) => {
     const prisma = new PrismaClient({
       datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
   
     const body=await c.req.json();
     // c.req.json() returns a promise so we have to await it
-    const encoder = new TextEncoder();
-    const passwordBuffer = encoder.encode(body.password);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', passwordBuffer);
-    const hashedPassword = Array.from(new Uint8Array(hashBuffer))
-      .map(b => b.toString(16).padStart(2, '0'))
-      .join('');
+    const hashedPassword=await passwordHashing(body.password);
     const response=await prisma.user.create({
       data:{
         email:body.email,
@@ -59,19 +55,14 @@ router.post('/api/v1/users/auth/signup', async(c) => {
   });
   
   // Signin Route
-  router.post('/api/v1/users/auth/signin',async(c)=>
+  router.post('/signin',async(c)=>
   {
         const prisma = new PrismaClient({
           datasourceUrl: c.env.DATABASE_URL,
       }).$extends(withAccelerate());
   
       const body=await c.req.json();
-      const encoder = new TextEncoder();
-      const passwordBuffer = encoder.encode(body.password);
-      const hashBuffer = await crypto.subtle.digest('SHA-256', passwordBuffer);
-      const hashedPassword = Array.from(new Uint8Array(hashBuffer))
-        .map(b => b.toString(16).padStart(2, '0'))
-        .join('');
+      const hashedPassword=await passwordHashing(body.password);
       const response=await prisma.user.findUnique({
         where:{
           email:body.email,
