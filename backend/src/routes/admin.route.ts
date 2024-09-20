@@ -267,7 +267,7 @@ router.delete('/books/delete/:id',jwtVerify,async(c)=>
     });
 });
     
-    // Admin getting all books route
+// Admin getting all books route
 router.get('/books',async(c)=>
 {
     const prisma = new PrismaClient({
@@ -286,10 +286,40 @@ router.get('/books',async(c)=>
   });
 });
     
-    // Admin getting books based on category route
-router.get('/books?category=category',async(c)=>
-{
-    
+// Admin getting books based on category route
+router.get('/findbooks', async (c) => {
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+
+  const findCategory = c.req.query('category') as Category;
+  //console.log(findCategory);
+
+  if (!findCategory) {
+    return c.json({
+      status: 400,
+      message: "Category parameter is missing",
+    }, 400);
+  }
+
+  const response = await prisma.books.findMany({
+    where: {
+      category: findCategory
+    }
+  });
+
+  if (response.length === 0) {
+    return c.json({
+      status: 404,
+      message: "No books found for the specified category",
+    }, 404);
+  }
+
+  return c.json({
+    status: 200,
+    message: "Books fetched successfully based on category",
+    data: response
+  });
 });
 
 export default router;
