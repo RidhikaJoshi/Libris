@@ -148,15 +148,123 @@ router.post('/books',jwtVerify,async(c)=>
 });
     
     // Admin updating book details route
-router.put('/books/:id',async(c)=>
+router.put('/books/editDetails/:id',jwtVerify,async(c)=>
 {
+    const prisma = new PrismaClient({
+      datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+
+  const bookId=c.req.param('id');
+  const bookFound=await prisma.books.findUnique({
+    where:
+    {
+      id:bookId
+    }
+  });
+  if(!bookFound)
+  {
+    return c.text("Book not found in the database or Invalid book Id");
+  }
+ const body=await c.req.formData();
+const editDetails=await prisma.books.update({
+  where:{
+    id:bookId
+  },
+  data:{
+    title:body.get('title') as string || bookFound.title,
+    author: body.get('author') as string || bookFound.author,
+    description: body.get('description') as string || bookFound.description,
+    category: (body.get('category') as Category) || bookFound.category,
+    totalCopies: parseInt(body.get('totalCopies') as string) || bookFound.totalCopies,
+    available: parseInt(body.get('available') as string) || bookFound.available,
+    publication: new Date(body.get('publication') as string) || bookFound.publication,
+    image:bookFound.image
     
+  }
+});
+  if(!editDetails)
+  {
+    return c.text("Internal server error occured while updating book details");
+  }
+  return c.json({
+    status:200,
+    message:"Book details updated successfully",
+    data:editDetails
+  });
+});
+
+router.put('/books/editImage/:id',jwtVerify,async(c)=>
+{
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+
+  const bookId=c.req.param('id');
+  const bookFound=await prisma.books.findUnique({
+    where:{
+      id:bookId
+    }
+  });
+  if(!bookFound)
+  {
+    return c.text("Book not found in the database or Invalid book Id");
+  }
+  const body=await c.req.formData();
+  const bookImage=body.get('image') as File;
+  const imageUrl=await uploadImage(c.env.CLOUDINARY_CLOUD_NAME,c.env.UPLOAD_PRESET_NAME,bookImage);
+  
+  const editImage=await prisma.books.update({
+    where:{
+      id:bookId
+    },
+    data:{
+      image:imageUrl
+    }
+  });
+  if(!editImage)
+    {
+      return c.text("Internal server error occured while updating book image");
+    }
+    return c.json({
+      status:200,
+      message:"Book image updated successfully",
+      data:editImage
+    })
+  
 });
     
     // Admin deleting book route
-router.delete('/books/:id',async(c)=>
+router.delete('/books/delete/:id',jwtVerify,async(c)=>
 {
-    
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+
+  const bookId=c.req.param('id');
+  const bookFound=await prisma.books.findUnique({
+    where:{
+      id:bookId
+    }});
+    if(!bookFound)
+    {
+      return c.text("Invalid book Id or book does not exists in the databse");
+    }
+    // if book is found then delete the book
+    const deleteBook=await prisma.books.delete({
+      where:
+      {
+        id:bookId
+      }
+    });
+    if(!deleteBook)
+    {
+      return c.text("Internal server error occured while deleting book");
+    }
+    return c.json({
+      status:200,
+      message:"Book deleted successfully",
+      data:deleteBook
+    });
 });
     
     // Admin getting all books route
