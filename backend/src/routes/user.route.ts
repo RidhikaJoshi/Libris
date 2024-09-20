@@ -1,7 +1,7 @@
 import { Hono } from 'hono'
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
-import { sign, verify } from 'hono/jwt'
+import { sign } from 'hono/jwt'
 
 // defining the type of environment variables whenever you initialize the the app using hono
 const router = new Hono<{

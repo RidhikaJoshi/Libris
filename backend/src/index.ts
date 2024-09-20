@@ -1,6 +1,4 @@
 import { Hono } from 'hono'
-import { PrismaClient } from '@prisma/client/edge'
-import { withAccelerate } from '@prisma/extension-accelerate'
 import adminRouter from './routes/admin.route'
 import userRouter from './routes/user.route';
 
@@ -15,10 +13,6 @@ const app = new Hono<{
     imageUrl:string
   };
 }>();
-
-
-
-
 
 app.route('/api/v1/admin',adminRouter);
 app.route('/api/v1/users',userRouter);

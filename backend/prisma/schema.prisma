@@ -37,6 +37,7 @@ model books{
   author String
   description String
   category Category
+  totalCopies Int
   available Int
   publication DateTime
   image String
