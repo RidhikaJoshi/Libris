@@ -145,9 +145,10 @@ router.get('/books/:id',async(c)=>
     });
     if(!response)
     {
-      return c.text("Internal Server error occurred while fetching book details");
+      return c.text("No book found with the given id");
     }
     return c.json({
+
       status:200,
       message:"Book details fetched successfully",
       data:response
