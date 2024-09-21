@@ -5,6 +5,7 @@ import { sign } from 'hono/jwt'
 import jwtVerify from '../utils/jwtVerify'
 import passwordHashing from '../utils/passwordHashing'
 import uploadImage from '../utils/cloudinary'
+import {adminSigninSchema,adminSignupSchema,bookSchema,bookUpdateSchema} from '@ridhikajoshi/libris-common'
 
 // defining the type of environment variables whenever you initialize the the app using hono
 const router = new Hono<{
@@ -17,6 +18,7 @@ const router = new Hono<{
 	};
   Variables: {
     userId: string
+
   };
 }>();
 
@@ -29,7 +31,16 @@ router.post('/signup',async(c)=>
       }).$extends(withAccelerate());
     
       const body = await c.req.json();
+      const {success} =adminSignupSchema.safeParse(body);
+      if(!success)
+      {
+        return c.json({
+            status:400, 
+            message:"Invalid email or password"
+        });
+      }
       const hashedPassword=await passwordHashing(body.password);
+
     
       // checking if admin already exists in the database
       const adminAlreadyExists=await prisma.admin.findUnique({
@@ -79,7 +90,16 @@ router.post('/signin',async(c)=>
       }).$extends(withAccelerate());
     
       const body=await c.req.json();
+      const {success} =adminSigninSchema.safeParse(body);
+      if(!success)
+      {
+        return c.json({
+          status:400,
+          message:"Invalid email or password"
+        });
+      }
      const hashedPassword=await passwordHashing(body.password);
+
       const response=await prisma.admin.findUnique({
         where:{
           email:body.email,
@@ -117,35 +137,55 @@ router.post('/books',jwtVerify,async(c)=>
     const prisma = new PrismaClient({
       datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
-  const body=await c.req.formData();
-  const bookImage=body.get('image') as File;
-  const imageUrl=await uploadImage(c.env.CLOUDINARY_CLOUD_NAME,c.env.UPLOAD_PRESET_NAME,bookImage);
-
-
-  const response=await prisma.books.create({
-    data:
+  try{
+    const body = await c.req.parseBody();
+      const imageUrl=await uploadImage(c.env.CLOUDINARY_CLOUD_NAME,c.env.UPLOAD_PRESET_NAME,body.image);
+    if(!imageUrl)
     {
-      title:body.get('title') as string || '',
-      author: body.get('author') as string || '',
-      description: body.get('description') as string || '',
-      category: (body.get('category') as Category) || 'OTHER',
-      totalCopies: parseInt(body.get('totalCopies') as string) || 0,
-      available: parseInt(body.get('available') as string) || 0,
-      publication: new Date(body.get('publication') as string),
-      image: imageUrl
+      return c.text("Internal server error occured while uploading image");
     }
-  })
+    const { success,error,data } =bookSchema.safeParse({
+      ...body,
+      image: imageUrl,
+    });
+    if (!success) {
+      return c.json({ message: "Invalid data provided" }, 400);
+    }
+     
+      const response=await prisma.books.create({
+        data:
+        {
+          title: body.title as string,
+          author: body.author as string,
+          description: body.description as string,
+          category: body.category as Category,
+          totalCopies: parseInt(body.totalCopies as string),
+          available: parseInt(body.available as string),
+          publication: new Date(body.publication as string),
+          image: imageUrl
+      }});
 
- if(!response)
- {
-  return c.text("Internal server error occured while adding book");
- }
- return c.json({
-  status:200,
-  message:"Book added successfully",
-  data:response
- });
+
+    if(!response)
+    {
+      return c.text("Internal server error occured while adding book");
+    }
+    return c.json({
+      status:200,
+      message:"Book added successfully",
+      data:response
+    });
+  }catch(error)
+  {
+    console.log(error);
+    return c.json({
+      status:500,
+      message:"Internal server error occured while adding book",
+      data:null
+    });
+  }
 });
+
     
     // Admin updating book details route
 router.put('/books/editDetails/:id',jwtVerify,async(c)=>
@@ -155,8 +195,18 @@ router.put('/books/editDetails/:id',jwtVerify,async(c)=>
   }).$extends(withAccelerate());
 
   const bookId=c.req.param('id');
+  const body=await c.req.parseBody();
+  const {success} =bookUpdateSchema.safeParse(body);
+  if(!success)
+  {
+    return c.json({
+      status:400,
+      message:"Invalid book details"
+    });
+  }
   const bookFound=await prisma.books.findUnique({
     where:
+
     {
       id:bookId
     }
@@ -165,19 +215,19 @@ router.put('/books/editDetails/:id',jwtVerify,async(c)=>
   {
     return c.text("Book not found in the database or Invalid book Id");
   }
- const body=await c.req.formData();
+
 const editDetails=await prisma.books.update({
   where:{
     id:bookId
   },
   data:{
-    title:body.get('title') as string || bookFound.title,
-    author: body.get('author') as string || bookFound.author,
-    description: body.get('description') as string || bookFound.description,
-    category: (body.get('category') as Category) || bookFound.category,
-    totalCopies: parseInt(body.get('totalCopies') as string) || bookFound.totalCopies,
-    available: parseInt(body.get('available') as string) || bookFound.available,
-    publication: new Date(body.get('publication') as string) || bookFound.publication,
+    title:body.title as string || bookFound.title,
+    author: body.author as string || bookFound.author,
+    description: body.description as string || bookFound.description,
+    category: (body.category as Category) || bookFound.category,
+    totalCopies: parseInt(body.totalCopies as string) || bookFound.totalCopies,
+    available: parseInt(body.available as string) || bookFound.available,
+    publication: (body.publication as string) || bookFound.publication,
     image:bookFound.image
     
   }

@@ -4,6 +4,7 @@ import { withAccelerate } from '@prisma/extension-accelerate'
 import { sign } from 'hono/jwt'
 import passwordHashing from '../utils/passwordHashing'
 import jwtVerify from '../utils/jwtVerify'
+import {userSignupSchema,userSigninSchema} from '@ridhikajoshi/libris-common'
 
 // defining the type of environment variables whenever you initialize the the app using hono
 const router = new Hono<{
@@ -27,8 +28,17 @@ router.post('/signup', async(c) => {
   
     const body=await c.req.json();
     // c.req.json() returns a promise so we have to await it
+    const {success} =userSignupSchema.safeParse(body);
+    if(!success)
+    {
+      return c.json({
+        status:400,
+        message:"Invalid user details"
+      });
+    }
     const hashedPassword=await passwordHashing(body.password);
     const response=await prisma.user.create({
+
       data:{
         email:body.email,
         fullName:body.fullName,
@@ -63,8 +73,17 @@ router.post('/signin',async(c) =>
       }).$extends(withAccelerate());
   
       const body=await c.req.json();
+      const {success} =userSigninSchema.safeParse(body);
+      if(!success)
+      {
+        return c.json({
+          status:400,
+          message:"Invalid email or password"
+        });
+      }
       const hashedPassword=await passwordHashing(body.password);
       const response=await prisma.user.findUnique({
+
         where:{
           email:body.email,
           password:hashedPassword
