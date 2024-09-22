@@ -14,6 +14,7 @@ export function SigninPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const [testLoading,setTestLoading]=useState(false);
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault()
@@ -46,6 +47,7 @@ export function SigninPage() {
     }, 3000)
   }
   const handleTestUserLogin = async () => {
+    setTestLoading(true);
     setEmail('test@gmail.com');
     setPassword('123456');
     try{
@@ -66,7 +68,11 @@ export function SigninPage() {
     setIsLoading(false);
     setEmail('');
     setPassword('');
-  }
+    setTestLoading(false);
+  }   
+  setTimeout(() => {
+    setTestLoading(false)
+  }, 3000)
   }
 
 
@@ -142,7 +148,7 @@ export function SigninPage() {
             </Button>
           </div>
         </form>
-        <Button className="group relative w-full flex justify-center py-2 px-4 border border-zinc-200 border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none  dark:border-zinc-800" onClick={handleTestUserLogin}>Login as a Test user</Button>
+        <Button className="group relative w-full flex justify-center py-2 px-4 border border-zinc-200 border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none  dark:border-zinc-800" onClick={handleTestUserLogin} disabled={testLoading}>{testLoading ? "Signing in..." : "Login as a Test user"}</Button>
         <p className="mt-2 text-center text-sm text-gray-400 ">
           Don't have an account? 
           <Link to="/signup" className="mx-2 font-medium text-indigo-400 hover:text-indigo-300">Sign Up
