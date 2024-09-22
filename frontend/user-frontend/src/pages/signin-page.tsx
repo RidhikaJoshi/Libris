@@ -1,17 +1,37 @@
-"'use client'"
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { BookOpen, Loader2, Lock } from "lucide-react"
+import { BookOpen, Loader2, Lock, ArrowLeft } from "lucide-react"
+import { Link } from "react-router-dom"
+import axios from 'axios'
 
 export function SigninPage() {
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault()
-    setIsLoading(true)
+    setIsLoading(true);
+
+    console.log(email, password);
+
+    try{
+        const response=await axios.post('https://backend.libris.workers.dev/api/v1/users/signin',
+          {
+            email,
+            password
+          }
+        )
+        console.log(response);
+    }catch(error)
+    {
+      console.log(error);
+    }
+
+
+
 
     setTimeout(() => {
       setIsLoading(false)
@@ -21,6 +41,12 @@ export function SigninPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md space-y-8">
+      <div className="flex flex-row items-center justify-start gap-0">
+            <ArrowLeft  className="font-medium text-indigo-400 hover:text-indigo-300" />
+            <Link to="/" className="font-medium text-indigo-400 hover:text-indigo-300 ">
+              Back to Home Page
+            </Link>
+        </div>
         <div>
           <BookOpen className="mx-auto h-12 w-12 text-indigo-400" />
           <h2 className="mt-6 text-center text-3xl font-extrabold text-white">Sign in to your account</h2>
@@ -28,8 +54,8 @@ export function SigninPage() {
             Access the library management system
           </p>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={onSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
+        <form className="mt-8 space-y-6 gap-4" onSubmit={onSubmit}>
+          <div className="space-y-4 rounded-md shadow-sm">
             <div>
               <Label htmlFor="email-address" className="sr-only">
                 Email address
@@ -42,6 +68,8 @@ export function SigninPage() {
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-zinc-200 border-gray-700 placeholder-gray-500 text-white bg-gray-800 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm dark:border-zinc-800"
                 placeholder="Email address"
+                value={email}
+                onChange={(e)=> setEmail(e.target.value)}
               />
             </div>
             <div>
@@ -56,27 +84,9 @@ export function SigninPage() {
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-zinc-200 border-gray-700 placeholder-gray-500 text-white bg-gray-800 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm dark:border-zinc-800"
                 placeholder="Password"
+                value={password}
+                onChange={(e)=> setPassword(e.target.value)}
               />
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <Input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-700 rounded bg-gray-800"
-              />
-              <Label htmlFor="remember-me" className="ml-2 block text-sm text-gray-400">
-                Remember me
-              </Label>
-            </div>
-
-            <div className="text-sm">
-              <a href="#" className="font-medium text-indigo-400 hover:text-indigo-300">
-                Forgot your password?
-              </a>
             </div>
           </div>
 
@@ -91,15 +101,14 @@ export function SigninPage() {
               ) : (
                 <Lock className="absolute left-0 inset-y-0 flex items-center pl-3 h-5 w-5 text-indigo-500 group-hover:text-indigo-400" aria-hidden="true" />
               )}
-              {isLoading ? "'Signing in...'" : "'Sign in'"}
+              {isLoading ? "Signing in..." : "Sign in"}
             </Button>
           </div>
         </form>
-        <p className="mt-2 text-center text-sm text-gray-400">
-          Don't have an account?{"'"}
-          <a href="#" className="font-medium text-indigo-400 hover:text-indigo-300">
-            Sign up
-          </a>
+        <p className="mt-2 text-center text-sm text-gray-400 ">
+          Don't have an account? 
+          <Link to="/signup" className="mx-2 font-medium text-indigo-400 hover:text-indigo-300">Sign Up
+          </Link>
         </p>
       </div>
     </div>

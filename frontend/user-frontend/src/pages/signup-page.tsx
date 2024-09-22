@@ -1,10 +1,9 @@
-"'use client'"
-
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { BookOpen, Loader2 } from "lucide-react"
+import { BookOpen, Loader2,ArrowLeft  } from "lucide-react"
+import { Link } from "react-router-dom"
 
 export function SignupPage() {
   const [isLoading, setIsLoading] = useState(false)
@@ -21,6 +20,12 @@ export function SignupPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900">
       <div className="w-full max-w-md space-y-8 px-4 bg-gray-800 py-12 rounded-xl shadow-2xl">
+        <div className="flex flex-row items-center justify-start gap-0">
+            <ArrowLeft  className="font-medium text-indigo-400 hover:text-indigo-300" />
+            <Link to="/" className="font-medium text-indigo-400 hover:text-indigo-300 ">
+              Back to Home Page
+            </Link>
+        </div>
         <div className="text-center">
           <BookOpen className="mx-auto h-12 w-12 text-indigo-400" />
           <h2 className="mt-6 text-3xl font-extrabold text-white">Create your account</h2>
@@ -87,10 +92,10 @@ export function SignupPage() {
           </div>
         </form>
         <p className="mt-2 text-center text-sm text-gray-400">
-          Already have an account?{"'"}
-          <a href="#" className="font-medium text-indigo-400 hover:text-indigo-300">
+          Already have an account?
+          <Link to="/signin" className="font-medium text-indigo-400 hover:text-indigo-300 mx-2">
             Sign in
-          </a>
+          </Link>
         </p>
       </div>
     </div>
