@@ -8,68 +8,21 @@ import { BookOpen, Loader2, Lock, Search, BookMarked, Users, BarChart, Zap, Shie
 import { Link } from "react-router-dom"
 
 export function HomePage() {
-  const [isLoading, setIsLoading] = useState(false)
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+ 
+  
 
-  useEffect(() => {
-    setIsAuthenticated(localStorage.getItem('isLoggedIn') === 'true');
-  }, []);
+  // async function onSubmit(event: React.SyntheticEvent) {
+  //   event.preventDefault()
+  //   setIsLoading(true)
 
-  const handleLogout = () => {
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('token');
-    setIsAuthenticated(false);
-  };
-
-  async function onSubmit(event: React.SyntheticEvent) {
-    event.preventDefault()
-    setIsLoading(true)
-
-    setTimeout(() => {
-      setIsLoading(false)
-    }, 3000)
-  }
+  //   setTimeout(() => {
+  //     setIsLoading(false)
+  //   }, 3000)
+  // }
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
-      {/* Header */}
-      <header className="bg-gray-800 py-4 sticky top-0 z-10">
-        <div className="container mx-auto px-4 flex justify-between items-center">
-          <div className="flex items-center">
-            <BookOpen className="h-8 w-8 text-indigo-400 mr-2" />
-            <span className="text-2xl font-bold">Libris</span>
-          </div>
-          <nav className="hidden md:flex space-x-4">
-            <Button variant="ghost" className="text-white hover:text-indigo-400">Books</Button>
-            <Button variant="ghost" className="text-white hover:text-indigo-400">Catalog</Button>
-            <Button variant="ghost" className="text-white hover:text-indigo-400">Transactions</Button>
-            <Button variant="ghost" className="text-white hover:text-indigo-400">About</Button>
-          </nav>
-          <div className="flex space-x-2">
-            {isAuthenticated ? (
-              <Button 
-                onClick={handleLogout}
-                className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 px-6 rounded-lg text-lg transition-all duration-300 transform hover:scale-105"
-              >
-                Logout
-              </Button>
-            ) : (
-              <>
-                <Link to="/signin">
-                  <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 px-6 rounded-lg text-lg transition-all duration-300 transform hover:scale-105">
-                    Sign In
-                  </Button>
-                </Link>
-                <Link to="/signup">
-                  <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 px-6 rounded-lg text-lg transition-all duration-300 transform hover:scale-105">
-                    Sign Up
-                  </Button>
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
-      </header>
+     
 
       {/* Hero Section with Banner */}
       <section className="relative py-20 overflow-hidden">
@@ -165,48 +118,7 @@ export function HomePage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-gray-900 py-12">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="text-lg font-semibold mb-4 text-indigo-400">About Us</h3>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Our Story</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Team</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Careers</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4 text-indigo-400">Resources</h3>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Blog</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">eBooks</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Webinars</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4 text-indigo-400">Support</h3>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Help Center</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Contact Us</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">FAQs</a></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold mb-4 text-indigo-400">Legal</h3>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Terms of Service</a></li>
-                <li><a href="#" className="text-gray-400 hover:text-white transition-colors">Cookie Policy</a></li>
-              </ul>
-            </div>
-          </div>
-          <div className="mt-8 pt-8 border-t border-gray-800 text-center">
-            <p className="text-gray-400">&copy; 2023 LibraryPro. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      
     </div>
   )
 }
