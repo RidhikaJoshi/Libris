@@ -5,7 +5,7 @@ export default function Footer(){
     return (
         <>
         {/* Footer */}
-      <footer className="bg-gray-900 py-12">
+      <footer className="bg-gray-900 py-12  ">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div>
@@ -42,7 +42,7 @@ export default function Footer(){
             </div>
           </div>
           <div className="mt-8 pt-8 border-t border-gray-800 text-center">
-            <p className="text-gray-400">&copy; 2023 LibraryPro. All rights reserved.</p>
+            <p className="text-gray-400">&copy; 2024 Libris. All rights reserved.</p>
           </div>
         </div>
       </footer>
