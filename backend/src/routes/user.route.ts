@@ -31,10 +31,11 @@ router.post('/signup', async(c) => {
     const {success} =userSignupSchema.safeParse(body);
     if(!success)
     {
+      c.status(400);
       return c.json({
-        status:400,
-        message:"Invalid user details",
-        data:null
+        status: 400,
+        message: "Invalid user details",
+        data: null
       });
     }
     const hashedPassword=await passwordHashing(body.password);
@@ -47,6 +48,7 @@ router.post('/signup', async(c) => {
       }
     });
     if(!response){
+      c.status(500);
       return c.json({
         status:500,
         message:"Internal server error occured while signup",
@@ -61,12 +63,14 @@ router.post('/signup', async(c) => {
     const token=await sign(payload,secret);
   
     if(!token){
+      c.status(500);
       return c.json({
         status:500,
         message:"Internal server error occured while login",
         data:null
       });
     }
+    c.status(200);
     return c.json({
       status:200,
       message:'User created successfully',
@@ -85,6 +89,7 @@ router.post('/signin',async(c) =>
       const {success} =userSigninSchema.safeParse(body);
       if(!success)
       {
+        c.status(400);
         return c.json({
           status:400,
           message:"Invalid email or password",
@@ -101,6 +106,7 @@ router.post('/signin',async(c) =>
       });
       if(!response)
       {
+        c.status(400);
         return c.json({
           status: 400,
           message: "Invalid email or password",
@@ -114,13 +120,14 @@ router.post('/signin',async(c) =>
       const token=await sign(payload,secret);
       if(!token)
       {
+        c.status(500);
         return c.json({
           status:500,
           message:"Internal server error occured while login",
           data:null
         });
       }
-  
+    c.status(200);
       return c.json({
         status:200,
         message:"User login successfully",
@@ -139,12 +146,14 @@ router.get('/books',async(c) =>
   const response=await prisma.books.findMany({});
   if(!response)
   {
-    return c.json({
+    c.status(500);
+      return c.json({
       status:500,
       message:"Internal server error occurred while fetching books",
       data:null
     });
   }
+  c.status(200);
   return c.json({
     status:200,
     message:"Books fetched successfully",
@@ -167,14 +176,15 @@ router.get('/books/:id',async(c)=>
     });
     if(!response)
     {
-        return c.json({
+        c.status(400);
+          return c.json({
             status:400,
             message:"Book not found",
             data:null
         });
     }
+    c.status(200);
     return c.json({
-
       status:200,
       message:"Book details fetched successfully",
       data:response
@@ -196,12 +206,14 @@ router.get('/books/category/:category',async(c)=>
   });
   if(!response)
   {
-    return c.json({
+    c.status(400);
+      return c.json({
       status:400,
       message:"No books found in this category",
       data:null
     });
   }
+  c.status(200);
   return c.json({
     status:200,
     message:"Books fetched successfully",
@@ -211,7 +223,7 @@ router.get('/books/category/:category',async(c)=>
 });
 
 // # Issue a book (generate a transaction)
-router.post('/issue/:bookId', jwtVerify, async (c) => {
+router.post('/issue/:bookId', jwtVerify, async (c) => {       
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
@@ -276,12 +288,14 @@ router.post('/issue/:bookId', jwtVerify, async (c) => {
     });
 
     // Return a success response if the transaction succeeds
+    c.status(200);
     return c.json({
       status: 200,
       message: 'Book issued successfully',
       data: result,
     });
-  } catch (error) {
+  } catch (error) {   
+    c.status(500);
     // Handle any error by returning a proper message
     return c.json({
       status: 500,
@@ -306,18 +320,20 @@ router.get('/transactions',jwtVerify,async(c)=>
       }
     });
     if(!response)
-    {
+    {   
+      c.status(400);
       return c.json({
         status:400,
         message:"No transactions found",
         data:null
       });
     }
+    c.status(200);
     return c.json({
       status:200,
       message:"Transactions fetched successfully",
       data:response
-    });
+        });
 });
 
 export default router;
