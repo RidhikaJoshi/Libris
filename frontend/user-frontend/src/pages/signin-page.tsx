@@ -5,17 +5,21 @@ import { Label } from "@/components/ui/label"
 import { BookOpen, Loader2, Lock, ArrowLeft } from "lucide-react"
 import { Link } from "react-router-dom"
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export function SigninPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault()
     setIsLoading(true);
 
-    console.log(email, password);
+    // console.log(email, password);
 
     try{
         const response=await axios.post('https://backend.libris.workers.dev/api/v1/users/signin',
@@ -24,19 +28,52 @@ export function SigninPage() {
             password
           }
         )
-        console.log(response);
+        //console.log(response);
+      localStorage.setItem('token', response.data.data);
+      localStorage.setItem('isLoggedIn', 'true');
+      toast.success('Signed in successfully');
+      navigate('/');
     }catch(error)
     {
       console.log(error);
+      toast.error('Invalid email or password');
+      setIsLoading(false);
+      setEmail('');
+      setPassword('');
     }
-
-
-
-
     setTimeout(() => {
       setIsLoading(false)
     }, 3000)
   }
+  const handleTestUserLogin = async () => {
+    setEmail('test@gmail.com');
+    setPassword('123456');
+    try{
+      const response=await axios.post('https://backend.libris.workers.dev/api/v1/users/signin',
+        {
+          email:'test@gmail.com',
+          password:'123456'        }
+      )
+      //console.log(response);
+    localStorage.setItem('token', response.data.data);
+    localStorage.setItem('isLoggedIn', 'true');
+    toast.success('Signed in successfully');
+    navigate('/');
+  }catch(error)
+  {
+    console.log(error);
+    toast.error('Invalid email or password');
+    setIsLoading(false);
+    setEmail('');
+    setPassword('');
+  }
+  }
+
+
+
+
+
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-900 px-4 sm:px-6 lg:px-8">
@@ -105,12 +142,14 @@ export function SigninPage() {
             </Button>
           </div>
         </form>
+        <Button className="group relative w-full flex justify-center py-2 px-4 border border-zinc-200 border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none  dark:border-zinc-800" onClick={handleTestUserLogin}>Login as a Test user</Button>
         <p className="mt-2 text-center text-sm text-gray-400 ">
           Don't have an account? 
           <Link to="/signup" className="mx-2 font-medium text-indigo-400 hover:text-indigo-300">Sign Up
           </Link>
         </p>
       </div>
+      <ToastContainer />
     </div>
   )
 }

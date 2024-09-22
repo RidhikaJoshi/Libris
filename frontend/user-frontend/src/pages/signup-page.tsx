@@ -4,14 +4,44 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { BookOpen, Loader2,ArrowLeft  } from "lucide-react"
 import { Link } from "react-router-dom"
+import axios from "axios"
+import { useNavigate } from "react-router-dom"
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 export function SignupPage() {
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate=useNavigate();
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault()
     setIsLoading(true)
 
+    try{
+        const response=await axios.post('https://backend.libris.workers.dev/api/v1/users/signup',
+          {
+            fullName,
+            email,
+            password
+          }
+        )
+        localStorage.setItem('token', response.data.data);
+        localStorage.setItem('isLoggedIn', 'true');
+        toast.success('Account created successfully');
+        navigate('/');
+    }catch(error)
+    {
+      toast.error('Failed to create account');
+      setIsLoading(false);
+      setEmail('');
+      setPassword('');
+      setFullName('');
+     // console.log(error);
+    }
     setTimeout(() => {
       setIsLoading(false)
     }, 3000)
@@ -46,6 +76,8 @@ export function SignupPage() {
                 required
                 className="appearance-none rounded-md relative block w-full px-3 py-2 border border-zinc-200 border-gray-700 placeholder-gray-500 text-white bg-gray-700 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm dark:border-zinc-800"
                 placeholder="Full Name"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
               />
             </div>
             <div>
@@ -60,6 +92,8 @@ export function SignupPage() {
                 required
                 className="appearance-none rounded-md relative block w-full px-3 py-2 border border-zinc-200 border-gray-700 placeholder-gray-500 text-white bg-gray-700 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm dark:border-zinc-800"
                 placeholder="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div>
@@ -73,7 +107,9 @@ export function SignupPage() {
                 autoComplete="new-password"
                 required
                 className="appearance-none rounded-md relative block w-full px-3 py-2 border border-zinc-200 border-gray-700 placeholder-gray-500 text-white bg-gray-700 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm dark:border-zinc-800"
-                placeholder="Password"
+                placeholder="Password"  
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
           </div>
@@ -98,6 +134,7 @@ export function SignupPage() {
           </Link>
         </p>
       </div>
+      <ToastContainer />
     </div>
   )
 }

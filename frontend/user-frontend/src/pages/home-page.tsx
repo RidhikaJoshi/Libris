@@ -1,5 +1,5 @@
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -9,6 +9,17 @@ import { Link } from "react-router-dom"
 
 export function HomePage() {
   const [isLoading, setIsLoading] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    setIsAuthenticated(localStorage.getItem('isLoggedIn') === 'true');
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('isLoggedIn');
+    localStorage.removeItem('token');
+    setIsAuthenticated(false);
+  };
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault()
@@ -30,19 +41,32 @@ export function HomePage() {
           </div>
           <nav className="hidden md:flex space-x-4">
             <Button variant="ghost" className="text-white hover:text-indigo-400">Books</Button>
+            <Button variant="ghost" className="text-white hover:text-indigo-400">Catalog</Button>
             <Button variant="ghost" className="text-white hover:text-indigo-400">Transactions</Button>
             <Button variant="ghost" className="text-white hover:text-indigo-400">About</Button>
           </nav>
           <div className="flex space-x-2">
-            <Link to="/signin"><Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 px-6 rounded-lg text-lg transition-all duration-300 transform hover:scale-105">
-              Sign In
-            </Button></Link>
-            <Link to="/signup"><Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 px-6 rounded-lg text-lg transition-all duration-300 transform hover:scale-105">
-              Sign Up
-            </Button></Link>
-            <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 px-6 rounded-lg text-lg transition-all duration-300 transform hover:scale-105">
-            Logout
-            </Button>
+            {isAuthenticated ? (
+              <Button 
+                onClick={handleLogout}
+                className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 px-6 rounded-lg text-lg transition-all duration-300 transform hover:scale-105"
+              >
+                Logout
+              </Button>
+            ) : (
+              <>
+                <Link to="/signin">
+                  <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 px-6 rounded-lg text-lg transition-all duration-300 transform hover:scale-105">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link to="/signup">
+                  <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 px-6 rounded-lg text-lg transition-all duration-300 transform hover:scale-105">
+                    Sign Up
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </header>
