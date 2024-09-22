@@ -33,7 +33,8 @@ router.post('/signup', async(c) => {
     {
       return c.json({
         status:400,
-        message:"Invalid user details"
+        message:"Invalid user details",
+        data:null
       });
     }
     const hashedPassword=await passwordHashing(body.password);
@@ -46,7 +47,11 @@ router.post('/signup', async(c) => {
       }
     });
     if(!response){
-      return c.text('Internal Server error occured while signup');
+      return c.json({
+        status:500,
+        message:"Internal server error occured while signup",
+        data:null
+      });
     }
   
     const payload={
@@ -56,7 +61,11 @@ router.post('/signup', async(c) => {
     const token=await sign(payload,secret);
   
     if(!token){
-      return c.text('Internal Server error occured while signup');
+      return c.json({
+        status:500,
+        message:"Internal server error occured while login",
+        data:null
+      });
     }
     return c.json({
       status:200,
@@ -78,7 +87,8 @@ router.post('/signin',async(c) =>
       {
         return c.json({
           status:400,
-          message:"Invalid email or password"
+          message:"Invalid email or password",
+          data:null
         });
       }
       const hashedPassword=await passwordHashing(body.password);
@@ -91,7 +101,11 @@ router.post('/signin',async(c) =>
       });
       if(!response)
       {
-        return c.text("User not found in the database");
+        return c.json({
+          status: 400,
+          message: "Invalid email or password",
+          data: null
+        });
       }
       const payload={
         id:response.id
@@ -100,7 +114,11 @@ router.post('/signin',async(c) =>
       const token=await sign(payload,secret);
       if(!token)
       {
-        return c.text("Internal server error occured while login");
+        return c.json({
+          status:500,
+          message:"Internal server error occured while login",
+          data:null
+        });
       }
   
       return c.json({
@@ -121,7 +139,11 @@ router.get('/books',async(c) =>
   const response=await prisma.books.findMany({});
   if(!response)
   {
-    return c.text("Internal server error occurred while fetching books");
+    return c.json({
+      status:500,
+      message:"Internal server error occurred while fetching books",
+      data:null
+    });
   }
   return c.json({
     status:200,
@@ -145,7 +167,11 @@ router.get('/books/:id',async(c)=>
     });
     if(!response)
     {
-      return c.text("No book found with the given id");
+        return c.json({
+            status:400,
+            message:"Book not found",
+            data:null
+        });
     }
     return c.json({
 
@@ -170,7 +196,11 @@ router.get('/books/category/:category',async(c)=>
   });
   if(!response)
   {
-    return c.text("Internal server error occurred while fetching books by category");
+    return c.json({
+      status:400,
+      message:"No books found in this category",
+      data:null
+    });
   }
   return c.json({
     status:200,
@@ -277,7 +307,11 @@ router.get('/transactions',jwtVerify,async(c)=>
     });
     if(!response)
     {
-      return c.text("Internal server error occurred while fetching transactions");
+      return c.json({
+        status:400,
+        message:"No transactions found",
+        data:null
+      });
     }
     return c.json({
       status:200,
