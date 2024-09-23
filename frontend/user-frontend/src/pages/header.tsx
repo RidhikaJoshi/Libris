@@ -2,10 +2,12 @@ import { Button } from "@/components/ui/button"
 import { BookOpen } from "lucide-react"
 import { Link } from "react-router-dom"
 import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 
 export default function Header(){
     const [isLoading, setIsLoading] = useState(false)
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         setIsAuthenticated(localStorage.getItem('isLoggedIn') === 'true');
@@ -15,6 +17,7 @@ export default function Header(){
         localStorage.removeItem('isLoggedIn');
         localStorage.removeItem('token');
         setIsAuthenticated(false);
+        navigate("/");
       };
     return (
         <>
@@ -28,7 +31,7 @@ export default function Header(){
        <nav className="hidden md:flex space-x-4">
        <Link to="/"><Button variant="ghost" className="text-white hover:text-indigo-400">Home</Button></Link>
          <Link to="/catalog"><Button variant="ghost" className="text-white hover:text-indigo-400">Books</Button></Link>
-         <Button variant="ghost" className="text-white hover:text-indigo-400">Transactions</Button>
+         <Link to="/transaction"><Button variant="ghost" className="text-white hover:text-indigo-400">Transactions</Button></Link>
          <Link to="/about"><Button variant="ghost" className="text-white hover:text-indigo-400">About</Button></Link>
        </nav>
        <div className="flex space-x-2">

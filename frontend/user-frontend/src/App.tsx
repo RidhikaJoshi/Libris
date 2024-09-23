@@ -4,6 +4,7 @@ import { HomePage } from "./pages/home-page"
 import { AboutPage } from "./pages/about-page"
 import { SignupPage } from "./pages/signup-page"
 import { CatalogPageComponent } from "./pages/catalog-page"
+import { TransactionPage } from "./pages/transaction-page"
 import Header from "./pages/header"
 import Footer from "./pages/footer"
 
@@ -20,6 +21,7 @@ function App() {
          <Route path="/signup" element={<SignupPage />} />
          <Route path='/about' element={<AboutPage/>}/>
          <Route path='/catalog' element={<CatalogPageComponent/>}/>
+         <Route path='/transaction' element={<TransactionPage/>}/>
         </Routes>
         <Footer/>
       </BrowserRouter>
