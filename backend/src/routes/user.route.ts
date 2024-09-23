@@ -223,12 +223,12 @@ router.get('/books/category/:category',async(c)=>
 });
 
 // # Issue a book (generate a transaction)
-router.post('/issue/:bookId', jwtVerify, async (c) => {       
+router.post('/issue/:id', jwtVerify, async (c) => {       
   const prisma = new PrismaClient({
     datasourceUrl: c.env.DATABASE_URL,
   }).$extends(withAccelerate());
 
-  const bookId = c.req.param('bookId');
+  const bookId=c.req.param('id');
   const userId = c.get('userId');
 
   try {

@@ -34,9 +34,11 @@ router.post('/signup',async(c)=>
       const {success} =adminSignupSchema.safeParse(body);
       if(!success)
       {
+        c.status(400);
         return c.json({
             status:400, 
-            message:"Invalid email or password"
+            message:"Invalid email or password",
+            data:null
         });
       }
       const hashedPassword=await passwordHashing(body.password);
@@ -49,8 +51,13 @@ router.post('/signup',async(c)=>
         }
       });
       if(adminAlreadyExists)
-      {
-        return c.text("Admin already exists in the database");
+      { 
+        c.status(400);
+        return c.json({
+          status:400,
+          message:"Admin already exists in the database",
+          data:null
+         });
       }
 
       const response = await prisma.admin.create({
@@ -62,7 +69,12 @@ router.post('/signup',async(c)=>
       });
       if(!response)
       {
-        return c.text("Internal server error occured while signup");
+        c.status(400);
+        return c.json({
+          status:400,
+          message:"Internal server error occured while signup",
+          data:null
+         });
       }
     
       const payload={
@@ -72,7 +84,12 @@ router.post('/signup',async(c)=>
       const token=await sign(payload,secret);
       if(!token)
       {
-        return c.text("Internal server error occured while signup");
+        c.status(400);
+       return c.json({
+        status:400,
+        message:"Internal server error occured while signup",
+        data:null
+       });
       }
       
       return c.json({
@@ -93,9 +110,11 @@ router.post('/signin',async(c)=>
       const {success} =adminSigninSchema.safeParse(body);
       if(!success)
       {
+        c.status(400);
         return c.json({
           status:400,
-          message:"Invalid email or password"
+          message:"Invalid email or password",
+          data:null
         });
       }
      const hashedPassword=await passwordHashing(body.password);
@@ -109,7 +128,12 @@ router.post('/signin',async(c)=>
       // if no record found
       if(!response)
       {
-        return c.text("Admin not found in the database");
+        c.status(400);
+        return c.json({
+          status:400,
+          message:"Admin not found in the database",
+          data:null
+         });
       }
       // if found
       const payload={
@@ -119,7 +143,12 @@ router.post('/signin',async(c)=>
       const token=await sign(payload,secret);
       if(!token)
       {
-        return c.text("Internal server error occured while login");
+        c.status(400);
+        return c.json({
+          status:400,
+          message:"Internal server error occured while login",
+          data:null
+         });
       }
     
       return c.json({
@@ -142,14 +171,24 @@ router.post('/books',jwtVerify,async(c)=>
       const imageUrl=await uploadImage(c.env.CLOUDINARY_CLOUD_NAME,c.env.UPLOAD_PRESET_NAME,body.image);
     if(!imageUrl)
     {
-      return c.text("Internal server error occured while uploading image");
+      c.status(400);
+      return c.json({
+        status:400,
+        message:"Internal server error occured while uploading image",
+        data:null
+       });
     }
     const { success,error,data } =bookSchema.safeParse({
       ...body,
       image: imageUrl,
     });
     if (!success) {
-      return c.json({ message: "Invalid data provided" }, 400);
+      c.status(400);
+      return c.json({
+        status:400,
+        message:"Invalid data provided",
+        data:null
+       });
     }
      
       const response=await prisma.books.create({
@@ -168,7 +207,12 @@ router.post('/books',jwtVerify,async(c)=>
 
     if(!response)
     {
-      return c.text("Internal server error occured while adding book");
+      c.status(400);
+      return c.json({
+        status:400,
+        message:"Internal server error occured while adding book",
+        data:null
+       });
     }
     return c.json({
       status:200,
@@ -178,6 +222,7 @@ router.post('/books',jwtVerify,async(c)=>
   }catch(error)
   {
     console.log(error);
+    c.status(500);
     return c.json({
       status:500,
       message:"Internal server error occured while adding book",
@@ -199,9 +244,11 @@ router.put('/books/editDetails/:id',jwtVerify,async(c)=>
   const {success} =bookUpdateSchema.safeParse(body);
   if(!success)
   {
+    c.status(400);
     return c.json({
       status:400,
-      message:"Invalid book details"
+      message:"Invalid book details",
+      data:null
     });
   }
   const bookFound=await prisma.books.findUnique({
@@ -213,7 +260,12 @@ router.put('/books/editDetails/:id',jwtVerify,async(c)=>
   });
   if(!bookFound)
   {
-    return c.text("Book not found in the database or Invalid book Id");
+    c.status(400);
+    return c.json({
+      status:400,
+      message:"Book not found in the database or Invalid book Id",
+      data:null
+    });
   }
 
 const editDetails=await prisma.books.update({
@@ -234,7 +286,12 @@ const editDetails=await prisma.books.update({
 });
   if(!editDetails)
   {
-    return c.text("Internal server error occured while updating book details");
+    c.status(400);
+    return c.json({
+      status:400,
+      message:"Internal server error occured while updating book details",
+      data:null
+    });
   }
   return c.json({
     status:200,
@@ -257,7 +314,12 @@ router.put('/books/editImage/:id',jwtVerify,async(c)=>
   });
   if(!bookFound)
   {
-    return c.text("Book not found in the database or Invalid book Id");
+    c.status(400);
+    return c.json({
+      status:400,
+      message:"Book not found in the database or Invalid book Id",
+      data:null
+    });
   }
   const body=await c.req.formData();
   const bookImage=body.get('image') as File;
@@ -273,7 +335,12 @@ router.put('/books/editImage/:id',jwtVerify,async(c)=>
   });
   if(!editImage)
     {
-      return c.text("Internal server error occured while updating book image");
+      c.status(400);
+      return c.json({
+        status:400,
+        message:"Internal server error occured while updating book image",
+        data:null
+      });
     }
     return c.json({
       status:200,
@@ -297,7 +364,12 @@ router.delete('/books/delete/:id',jwtVerify,async(c)=>
     }});
     if(!bookFound)
     {
-      return c.text("Invalid book Id or book does not exists in the databse");
+        c.status(400);
+        return c.json({
+          status:400,
+          message:"Invalid book Id or book does not exists in the databse",
+          data:null
+        });
     }
     // if book is found then delete the book
     const deleteBook=await prisma.books.delete({
@@ -308,7 +380,12 @@ router.delete('/books/delete/:id',jwtVerify,async(c)=>
     });
     if(!deleteBook)
     {
-      return c.text("Internal server error occured while deleting book");
+      c.status(400);
+      return c.json({
+        status:400,
+        message:"Internal server error occured while deleting book",
+        data:null
+      });
     }
     return c.json({
       status:200,
@@ -327,7 +404,12 @@ router.get('/books',async(c)=>
   const response=await prisma.books.findMany();
   if(!response)
   {
-    return c.text("Internal server error occured while getting books");
+    c.status(400);
+    return c.json({
+      status:400,
+      message:"Internal server error occured while getting books",
+      data:null
+    });
   }
   return c.json({
     status:200,
@@ -346,10 +428,12 @@ router.get('/findbooks', async (c) => {
   //console.log(findCategory);
 
   if (!findCategory) {
+    c.status(400);
     return c.json({
       status: 400,
       message: "Category parameter is missing",
-    }, 400);
+      data:null
+    });
   }
 
   const response = await prisma.books.findMany({
@@ -359,10 +443,12 @@ router.get('/findbooks', async (c) => {
   });
 
   if (response.length === 0) {
+    c.status(400);
     return c.json({
-      status: 404,
-      message: "No books found for the specified category",
-    }, 404);
+      status: 400,
+      message: "No books found in the database for the given category",
+      data: null
+    });
   }
 
   return c.json({
@@ -382,7 +468,12 @@ router.get('/transactions',jwtVerify,async(c)=>
   const response=await prisma.transactions.findMany();
   if(!response)
   {
-    return c.text("Internal server error occured while fetching transactions");
+    c.status(400);
+    return c.json({
+      status:400,
+      message:"Internal server error occured while fetching transactions",
+      data:null
+    });
   }
   return c.json({
     status:200,
@@ -403,12 +494,13 @@ router.put('/return/:transactionId', jwtVerify, async (c) => {
 
   // Ensure the status provided is one of the valid options
   const validStatuses = [TransactionStatus.TAKEN, TransactionStatus.RETURNED, TransactionStatus.LOST];
-  if (!validStatuses.includes(status)) {
+  if (!validStatuses.includes(status)) {  
+    c.status(400);  
     return c.json({
       status: 400,
       message: 'Invalid status. Status must be TAKEN, RETURNED, or LOST.',
       data: null,
-    });
+        });
   }
 
   try {
@@ -499,6 +591,7 @@ router.put('/return/:transactionId', jwtVerify, async (c) => {
       data:result
     });
   } catch (error) {
+    c.status(500);
     return c.json({
       status:500,
       message:"Internal server error occured while updating transaction",
