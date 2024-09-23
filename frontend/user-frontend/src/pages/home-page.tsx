@@ -5,11 +5,27 @@ import { Label } from "@/components/ui/label"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import {  Search, BookMarked, Users, BarChart, Zap, Shield } from "lucide-react"
 import { Link } from "react-router-dom"
+import axios from "axios"
+import { bookInfer } from '@ridhikajoshi/libris-common'
 
 export function HomePage() {
+  const [allBooks, setAllBooks] = useState<bookInfer[]>([]);
+
+  useEffect(() => {
+    const fetchAllBooks = async () => {
+      try {
+        const response = await axios.get('https://backend.libris.workers.dev/api/v1/users/books');
+        console.log(response.data.data);
+        setAllBooks(response.data.data);
+      } catch(error) {
+        console.log(error);
+      }
+    }
+    fetchAllBooks();
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-gray-900 text-white mx-auto p-4">
      
 
       {/* Hero Section with Banner */}
@@ -84,31 +100,18 @@ export function HomePage() {
             Featured Books
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <BookCard
-              title="The Great Gatsby"
-              author="F. Scott Fitzgerald"
-              imageUrl="https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80"
-            />
-            <BookCard
-              title="To Kill a Mockingbird"
-              author="Harper Lee"
-              imageUrl="https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1074&q=80"
-            />
-            <BookCard
-              title="1984"
-              author="George Orwell"
-              imageUrl="https://images.unsplash.com/photo-1541963463532-d68292c34b19?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=688&q=80"
-            />
-            <BookCard
-              title="Pride and Prejudice"
-              author="Jane Austen"
-              imageUrl="https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80"
-            />
+            {allBooks.slice(0, 8).map((book,index) => (
+              <Link to='/catalog'><BookCard
+                key={index}
+                title={book.title}
+                author={book.author}
+                imageUrl={book.image}
+              /></Link>
+            ))}
           </div>
         </div>
       </section>
 
-      
     </div>
   )
 }
@@ -127,50 +130,12 @@ function FeatureCard({ icon, title, description }: { icon: React.ReactNode, titl
 
 function BookCard({ title, author, imageUrl }: { title: string, author: string, imageUrl: string }) {
   return (
-    <div className="bg-gray-800 rounded-lg overflow-hidden shadow-lg transform transition duration-500 hover:scale-105">
-      <img src={imageUrl} alt={title} className="w-full h-48 object-cover" />
+    <div className="bg-gray-800 rounded-lg overflow-hidden shadow-lg transform transition duration-500 hover:scale-105 p-4 shadow-gray-700">
+      <img src={imageUrl} alt={title} className="w-full h-60  mb-4" />
       <div className="p-4">
         <h3 className="text-lg font-semibold mb-1 text-white">{title}</h3>
         <p className="text-sm text-gray-400">{author}</p>
       </div>
     </div>
-  )
-}
-
-function AuthDialog({ type }: { type: "'signin'" | "'signup'" }) {
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline" className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white border-none">
-          {type === "'signin'" ? "'Sign In'" : "'Sign Up'"}
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] bg-gray-800 text-white border border-zinc-200 border-gray-700 dark:border-zinc-800">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-500">
-            {type === "'signin'" ? "'Sign In'" : "'Create an Account'"}
-          </DialogTitle>
-        </DialogHeader>
-        <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
-          {type === "'signup'" && (
-            <div>
-              <Label htmlFor="name" className="text-gray-300">Name</Label>
-              <Input id="name" className="bg-gray-700 text-white border-gray-600 focus:border-indigo-500" />
-            </div>
-          )}
-          <div>
-            <Label htmlFor="email" className="text-gray-300">Email</Label>
-            <Input id="email" type="email" className="bg-gray-700 text-white border-gray-600 focus:border-indigo-500" />
-          </div>
-          <div>
-            <Label htmlFor="password" className="text-gray-300">Password</Label>
-            <Input id="password" type="password" className="bg-gray-700 text-white border-gray-600 focus:border-indigo-500" />
-          </div>
-          <Button type="submit" className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white transition-all duration-300 transform hover:scale-105">
-            {type === "'signin'" ? "'Sign In'" : "'Sign Up'"}
-          </Button>
-        </form>
-      </DialogContent>
-    </Dialog>
-  )
+  ) 
 }
