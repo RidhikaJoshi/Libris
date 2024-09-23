@@ -1,0 +1,6 @@
+name = "user-frontend" # The name for your Cloudflare Workers project.
+
+
+# Since you're deploying a Vite frontend, this section defines the output folder (usually 'dist')
+[site]
+bucket = "./dist" # The folder with the static build assets (Vite outputs to 'dist' by default).
