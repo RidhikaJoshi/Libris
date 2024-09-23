@@ -1,24 +1,12 @@
-
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { BookOpen, Loader2, Lock, Search, BookMarked, Users, BarChart, Zap, Shield } from "lucide-react"
+import {  Search, BookMarked, Users, BarChart, Zap, Shield } from "lucide-react"
 import { Link } from "react-router-dom"
 
 export function HomePage() {
- 
-  
-
-  // async function onSubmit(event: React.SyntheticEvent) {
-  //   event.preventDefault()
-  //   setIsLoading(true)
-
-  //   setTimeout(() => {
-  //     setIsLoading(false)
-  //   }, 3000)
-  // }
 
   return (
     <div className="min-h-screen bg-gray-900 text-white">
@@ -34,9 +22,11 @@ export function HomePage() {
             <p className="text-xl mb-8 text-gray-400">
               Explore our vast collection and embark on countless literary adventures.
             </p>
-            <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition-all duration-300 transform hover:scale-105">
-              Start Exploring
-            </Button>
+            <Link to="/catalog">
+              <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 px-6 rounded-lg text-lg transition-all duration-300 transform hover:scale-105">
+                Start Exploring
+              </Button>
+            </Link>
           </div>
         </div>
         {/* Tilted lines */}

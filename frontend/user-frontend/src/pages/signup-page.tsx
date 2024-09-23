@@ -33,6 +33,7 @@ export function SignupPage() {
         localStorage.setItem('isLoggedIn', 'true');
         toast.success('Account created successfully');
         navigate('/');
+        window.location.reload();
     }catch(error)
     {
       toast.error('Failed to create account');

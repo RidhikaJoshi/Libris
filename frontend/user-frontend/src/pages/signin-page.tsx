@@ -61,6 +61,7 @@ export function SigninPage() {
     localStorage.setItem('isLoggedIn', 'true');
     toast.success('Signed in successfully');
     navigate('/');
+    window.location.reload();
   }catch(error)
   {
     console.log(error);

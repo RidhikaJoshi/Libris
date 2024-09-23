@@ -26,6 +26,7 @@ export default function Header(){
          <span className="text-2xl font-bold text-white ">Libris</span>
        </div></Link>
        <nav className="hidden md:flex space-x-4">
+       <Link to="/"><Button variant="ghost" className="text-white hover:text-indigo-400">Home</Button></Link>
          <Link to="/catalog"><Button variant="ghost" className="text-white hover:text-indigo-400">Books</Button></Link>
          <Button variant="ghost" className="text-white hover:text-indigo-400">Transactions</Button>
          <Link to="/about"><Button variant="ghost" className="text-white hover:text-indigo-400">About</Button></Link>
