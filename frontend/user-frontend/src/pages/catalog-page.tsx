@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import {  Search, BookmarkIcon, Cone } from "lucide-react"
+import {  Search, BookmarkIcon } from "lucide-react"
 import axios from "axios"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -91,14 +91,14 @@ export function CatalogPageComponent() {
   )
 }
 
-function BookCard({ title, author, description, category, totalCopies, available, publication, image }: bookInfer ) {
+function BookCard({ title, author, description, category, totalCopies, available, image }: bookInfer ) {
   const [isOpen, setIsOpen] = useState(false)
-  const [books,setBooks]=useState([]);
+  // const [books,setBooks]=useState([]);
 
   const handleIssue = async () => {
     try {
       const allBooks=await axios.get('https://backend.libris.workers.dev/api/v1/users/books');
-      setBooks(allBooks.data.data);
+     // setBooks(allBooks.data.data);
       const book = allBooks.data.data.find((book: any) => book.title === title);
       if (book && book.id) {
         console.log(book.id);
