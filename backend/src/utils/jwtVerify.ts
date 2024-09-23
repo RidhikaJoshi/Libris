@@ -13,6 +13,7 @@ async function jwtVerify(c: Context, next: Next)
       const header = c.req.header("authorization") || "";
       // Ensure the token is in the correct format: "Bearer <token>"
       if (!header.startsWith('Bearer ')) {
+        c.status(401);
         return c.json({
           status: 401,
           message: 'Authorization header format is invalid',
@@ -22,6 +23,7 @@ async function jwtVerify(c: Context, next: Next)
       const token = header.split(" ")[1];
       const verifiedHeader = await verify(token, c.env.JWT_SECRET);
       if (!verifiedHeader?.id) {
+        c.status(401);
         return c.json({
           status: 401,
           message: "Unauthorized access to the application",
@@ -33,6 +35,7 @@ async function jwtVerify(c: Context, next: Next)
       await next();
     } catch (error) {
       console.error("JWT verification error:", error);
+      c.status(401);
       return c.json({
         status: 401,
         message: "Error verifying authentication token",
