@@ -39,7 +39,7 @@ model books{
   category Category
   totalCopies Int
   available Int
-  publication DateTime
+  publication Int
   image String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

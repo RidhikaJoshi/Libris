@@ -178,6 +178,8 @@ router.post('/books',jwtVerify,async(c)=>
         data:null
        });
     }
+   // console.log(body);
+    //console.log(imageUrl);
     const { success,error,data } =bookSchema.safeParse({
       ...body,
       image: imageUrl,
@@ -200,7 +202,7 @@ router.post('/books',jwtVerify,async(c)=>
           category: body.category as Category,
           totalCopies: parseInt(body.totalCopies as string),
           available: parseInt(body.available as string),
-          publication: new Date(body.publication as string),
+          publication: parseInt(body.publication as string), 
           image: imageUrl
       }});
 
@@ -279,7 +281,7 @@ const editDetails=await prisma.books.update({
     category: (body.category as Category) || bookFound.category,
     totalCopies: parseInt(body.totalCopies as string) || bookFound.totalCopies,
     available: parseInt(body.available as string) || bookFound.available,
-    publication: (body.publication as string) || bookFound.publication,
+    publication: typeof body.publication === 'number' ? body.publication : bookFound.publication,
     image:bookFound.image
     
   }

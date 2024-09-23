@@ -17,7 +17,7 @@ const app = new Hono<{
 
 // Configure CORS options
 const corsOptions = {
-  origin: ['http://localhost:5173'], // Add your frontend domains
+  origin: "*", // Add your frontend domains
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowHeaders: ['Content-Type', 'Authorization'],
   exposeHeaders: ['Content-Length', 'X-Requested-With'],
