@@ -28,28 +28,28 @@ export declare const bookSchema: z.ZodObject<{
     title: z.ZodString;
     author: z.ZodString;
     description: z.ZodString;
-    category: z.ZodEnum<["FICTION", "NON_FICTION", "BIOGRAPHY", "MATH", "HISTORY", "SCIENCE", "PHILOSOPHY", "OTHER"]>;
+    category: z.ZodEnum<["FICTIONAL", "NON_FICTIONAL", "BIOGRAPHY", "MATH", "HISTORY", "SCIENCE", "PHILOSOPHY", "OTHER"]>;
     totalCopies: z.ZodNumber;
     available: z.ZodNumber;
-    publication: z.ZodDate;
+    publication: z.ZodNumber;
     image: z.ZodString;
 }, "strip", z.ZodTypeAny, {
     title: string;
     author: string;
     description: string;
-    category: "FICTION" | "NON_FICTION" | "BIOGRAPHY" | "MATH" | "HISTORY" | "SCIENCE" | "PHILOSOPHY" | "OTHER";
+    category: "FICTIONAL" | "NON_FICTIONAL" | "BIOGRAPHY" | "MATH" | "HISTORY" | "SCIENCE" | "PHILOSOPHY" | "OTHER";
     totalCopies: number;
     available: number;
-    publication: Date;
+    publication: number;
     image: string;
 }, {
     title: string;
     author: string;
     description: string;
-    category: "FICTION" | "NON_FICTION" | "BIOGRAPHY" | "MATH" | "HISTORY" | "SCIENCE" | "PHILOSOPHY" | "OTHER";
+    category: "FICTIONAL" | "NON_FICTIONAL" | "BIOGRAPHY" | "MATH" | "HISTORY" | "SCIENCE" | "PHILOSOPHY" | "OTHER";
     totalCopies: number;
     available: number;
-    publication: Date;
+    publication: number;
     image: string;
 }>;
 export type bookInfer = z.infer<typeof bookSchema>;
@@ -57,26 +57,26 @@ export declare const bookUpdateSchema: z.ZodObject<{
     title: z.ZodOptional<z.ZodString>;
     author: z.ZodOptional<z.ZodString>;
     description: z.ZodOptional<z.ZodString>;
-    category: z.ZodOptional<z.ZodEnum<["FICTION", "NON_FICTION", "BIOGRAPHY", "MATH", "HISTORY", "SCIENCE", "PHILOSOPHY", "OTHER"]>>;
+    category: z.ZodOptional<z.ZodEnum<["FICTIONAL", "NON_FICTIONAL", "BIOGRAPHY", "MATH", "HISTORY", "SCIENCE", "PHILOSOPHY", "OTHER"]>>;
     totalCopies: z.ZodOptional<z.ZodNumber>;
     available: z.ZodOptional<z.ZodNumber>;
-    publication: z.ZodOptional<z.ZodDate>;
+    publication: z.ZodOptional<z.ZodNumber>;
 }, "strip", z.ZodTypeAny, {
     title?: string | undefined;
     author?: string | undefined;
     description?: string | undefined;
-    category?: "FICTION" | "NON_FICTION" | "BIOGRAPHY" | "MATH" | "HISTORY" | "SCIENCE" | "PHILOSOPHY" | "OTHER" | undefined;
+    category?: "FICTIONAL" | "NON_FICTIONAL" | "BIOGRAPHY" | "MATH" | "HISTORY" | "SCIENCE" | "PHILOSOPHY" | "OTHER" | undefined;
     totalCopies?: number | undefined;
     available?: number | undefined;
-    publication?: Date | undefined;
+    publication?: number | undefined;
 }, {
     title?: string | undefined;
     author?: string | undefined;
     description?: string | undefined;
-    category?: "FICTION" | "NON_FICTION" | "BIOGRAPHY" | "MATH" | "HISTORY" | "SCIENCE" | "PHILOSOPHY" | "OTHER" | undefined;
+    category?: "FICTIONAL" | "NON_FICTIONAL" | "BIOGRAPHY" | "MATH" | "HISTORY" | "SCIENCE" | "PHILOSOPHY" | "OTHER" | undefined;
     totalCopies?: number | undefined;
     available?: number | undefined;
-    publication?: Date | undefined;
+    publication?: number | undefined;
 }>;
 export type bookUpdateInfer = z.infer<typeof bookUpdateSchema>;
 export declare const userSignupSchema: z.ZodObject<{
