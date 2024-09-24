@@ -92,7 +92,7 @@ export function HomePage() {
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-500">
             Featured Books
           </h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {allBooks.slice(0, 8).map((book,index) => (
               <Link to='/catalog'><BookCard
                 key={index}

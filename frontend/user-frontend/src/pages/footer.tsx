@@ -5,9 +5,9 @@ export default function Footer(){
     return (
         <>
         {/* Footer */}
-      <footer className="bg-gray-900 py-12  ">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <footer className="bg-gray-900 py-12 ">
+        <div className="container mx-auto px-8 ">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 justify-center">
             <div>
               <h3 className="text-lg font-semibold mb-4 text-indigo-400">About Us</h3>
               <ul className="space-y-2">
