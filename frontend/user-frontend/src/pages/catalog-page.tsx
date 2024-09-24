@@ -93,10 +93,14 @@ export function CatalogPageComponent() {
 
 function BookCard({ title, author, description, category, totalCopies, available, image }: bookInfer ) {
   const [isOpen, setIsOpen] = useState(false)
-  // const [books,setBooks]=useState([]);
 
   const handleIssue = async () => {
     try {
+      const token=localStorage.getItem('token');
+      if(!token){
+        toast.error("Please login to issue books");
+        return;
+      }
       const allBooks=await axios.get('https://backend.libris.workers.dev/api/v1/users/books');
      // setBooks(allBooks.data.data);
       const book = allBooks.data.data.find((book: any) => book.title === title);
@@ -118,7 +122,7 @@ function BookCard({ title, author, description, category, totalCopies, available
         toast.success(`Book "${title}" has been issued successfully!`);
         //console.log(response);
       }
-    } catch (error) {
+    } catch (error:any) {
       toast.error("Error issuing book");
     }
     setIsOpen(false)
