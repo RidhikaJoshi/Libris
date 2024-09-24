@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { BookOpen } from "lucide-react"
+import { BookOpen, Menu, X } from "lucide-react"
 import { Link } from "react-router-dom"
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom"
 export default function Header(){
   
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -19,6 +20,11 @@ export default function Header(){
         setIsAuthenticated(false);
         navigate("/");
       };
+
+      const toggleMenu = () => {
+        setIsMenuOpen(!isMenuOpen);
+      };
+
     return (
         <>
      {/* Header */}
@@ -34,7 +40,12 @@ export default function Header(){
          <Link to="/transaction"><Button variant="ghost" className="text-white hover:text-indigo-400">Transactions</Button></Link>
          <Link to="/about"><Button variant="ghost" className="text-white hover:text-indigo-400">About</Button></Link>
        </nav>
-       <div className="flex space-x-2">
+       <div className="md:hidden flex items-center">
+         <button onClick={toggleMenu}>
+           {isMenuOpen ? <X className="h-8 w-8 text-white" /> : <Menu className="h-8 w-8 text-white" />}
+         </button>
+       </div>
+       <div className="hidden md:flex space-x-2">
          {isAuthenticated ? (
            <Button 
              onClick={handleLogout}
@@ -58,6 +69,37 @@ export default function Header(){
          )}
        </div>
      </div>
+     {isMenuOpen && (
+       <div className="md:hidden bg-gray-800 py-4 flex flex-col items-center">
+         <nav className="flex flex-col space-y-4">
+           <Link to="/"><Button variant="ghost" className="text-white hover:text-indigo-400">Home</Button></Link>
+           <Link to="/catalog"><Button variant="ghost" className="text-white hover:text-indigo-400">Books</Button></Link>
+           <Link to="/transaction"><Button variant="ghost" className="text-white hover:text-indigo-400">Transactions</Button></Link>
+           <Link to="/about"><Button variant="ghost" className="text-white hover:text-indigo-400">About</Button></Link>
+           {isAuthenticated ? (
+             <Button 
+               onClick={handleLogout}
+               className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 px-6 rounded-lg text-lg transition-all duration-300 transform hover:scale-105"
+             >
+               Logout
+             </Button>
+           ) : (
+             <>
+               <Link to="/signin">
+                 <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 px-6 rounded-lg text-lg transition-all duration-300 transform hover:scale-105">
+                   Sign In
+                 </Button>
+               </Link>
+               <Link to="/signup">
+                 <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 px-6 rounded-lg text-lg transition-all duration-300 transform hover:scale-105">
+                   Sign Up
+                 </Button>
+               </Link>
+             </>
+           )}
+         </nav>
+       </div>
+     )}
    </header>
    </>
     )

@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
 import {  Search, BookMarked, Users, BarChart, Zap, Shield } from "lucide-react"
 import { Link } from "react-router-dom"
 import axios from "axios"
 import { bookInfer } from '@ridhikajoshi/libris-common'
+
 
 export function HomePage() {
   const [allBooks, setAllBooks] = useState<bookInfer[]>([]);
@@ -35,11 +35,7 @@ export function HomePage() {
             <p className="text-xl mb-8 text-gray-400">
               Explore our vast collection and embark on countless literary adventures.
             </p>
-            <Link to="/catalog">
-              <Button className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white py-3 px-6 rounded-lg text-lg transition-all duration-300 transform hover:scale-105">
-                Start Exploring
-              </Button>
-            </Link>
+           
           </div>
         </div>
         {/* Tilted lines */}
