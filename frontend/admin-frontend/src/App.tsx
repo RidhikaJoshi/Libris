@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom"
-import { HomePage } from "./pages/home-page"
+import { AdminDashboard } from './pages/admin-dashboard'
 import { SigninPage } from "./pages/signin-page"
 import { SignupPage } from "./pages/signup-page"
 function App() {
@@ -8,7 +8,7 @@ function App() {
     <>
      <BrowserRouter>
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          <Route path="/" element={<AdminDashboard />} />
           <Route path="/signin" element={<SigninPage />} />
           <Route path="/signup" element={<SignupPage />} />
         </Routes>

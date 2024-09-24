@@ -93,10 +93,10 @@ export function CatalogPageComponent() {
 
 function BookCard({ title, author, description, category, totalCopies, available, image }: bookInfer ) {
   const [isOpen, setIsOpen] = useState(false)
+  const token=localStorage.getItem('token');
 
   const handleIssue = async () => {
     try {
-      const token=localStorage.getItem('token');
       if(!token){
         toast.error("Please login to issue books");
         return;
@@ -146,6 +146,7 @@ function BookCard({ title, author, description, category, totalCopies, available
             <span>Available: {available}</span>
           </div>
         </div>
+
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
             <Button className="mt-2 w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm py-2 px-4 rounded-md transition-colors duration-300 flex items-center justify-center">
@@ -161,11 +162,11 @@ function BookCard({ title, author, description, category, totalCopies, available
               </DialogDescription>
             </DialogHeader>
             <div className="flex justify-end space-x-2 mt-4">
-              <Button variant="outline" onClick={() => setIsOpen(false)}>Cancel</Button>
+              <Button className="text-black" variant="outline" onClick={() => setIsOpen(false)}>Cancel</Button>
               <Button onClick={handleIssue}>Confirm Issue</Button>
             </div>
           </DialogContent>
-        </Dialog>
+          </Dialog>
       </div>
     </div>
   )
