@@ -8,6 +8,7 @@ import axios from "axios"
 import { useNavigate } from "react-router-dom"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useEffect } from "react"
 
 
 export function SignupPage() {
@@ -16,6 +17,14 @@ export function SignupPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate=useNavigate();
+
+  useEffect(()=>
+    {
+      window.scrollTo({
+        top: 0
+      });
+    }, []);
+
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault()

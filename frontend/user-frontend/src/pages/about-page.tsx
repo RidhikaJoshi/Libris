@@ -1,6 +1,12 @@
 import { Code, Database, Cloud, Zap, Shield, Users } from "lucide-react"
-
+import { useEffect } from "react"
 export function AboutPage() {
+  useEffect(()=>
+  {
+    window.scrollTo({
+      top: 0
+    });
+  }, []);
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100">
 

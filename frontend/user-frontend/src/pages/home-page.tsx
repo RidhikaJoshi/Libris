@@ -8,6 +8,13 @@ import { bookInfer } from '@ridhikajoshi/libris-common'
 export function HomePage() {
   const [allBooks, setAllBooks] = useState<bookInfer[]>([]);
 
+  useEffect(()=>
+    {
+      window.scrollTo({
+        top: 0
+      });
+    }, []);
+    
   useEffect(() => {
     const fetchAllBooks = async () => {
       try {

@@ -8,6 +8,7 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useEffect } from "react"
 
 export function SigninPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -15,6 +16,13 @@ export function SigninPage() {
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const [testLoading,setTestLoading]=useState(false);
+
+  useEffect(()=>
+    {
+      window.scrollTo({
+        top: 0
+      });
+    }, []);
 
   async function onSubmit(event: React.SyntheticEvent) {
     event.preventDefault()

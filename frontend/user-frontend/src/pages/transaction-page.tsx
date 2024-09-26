@@ -22,6 +22,13 @@ export function TransactionPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
 
+  useEffect(()=>
+    {
+      window.scrollTo({
+        top: 0
+      });
+    }, []);
+
   // Check if the user is authenticated
   useEffect(() => {
     const isLoggedIn = localStorage.getItem("isLoggedIn");

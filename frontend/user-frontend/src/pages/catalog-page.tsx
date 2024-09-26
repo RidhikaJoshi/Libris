@@ -21,6 +21,13 @@ export function CatalogPageComponent() {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [allBooks, setAllBooks] = useState<bookInfer[]>([]);
 
+  useEffect(()=>
+    {
+      window.scrollTo({
+        top: 0
+      });
+    }, []);
+
   useEffect(() => {
     const fetchAllBooks = async () => {
       try {
