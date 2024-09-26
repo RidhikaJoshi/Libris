@@ -59,3 +59,14 @@ export const userSigninSchema=z.object({
 
 export type userSigninInfer=z.infer<typeof userSigninSchema>;
 
+
+export const transactionSchema=z.object({
+    id:z.string(),
+    bookId:z.string(),
+    userId:z.string(),
+    issueDate:z.string(),
+    returnDate:z.string(),
+    status:z.enum(['ISSUED', 'RETURNED', 'LOST','TAKEN'])
+});
+
+export type transactionInfer=z.infer<typeof transactionSchema>;

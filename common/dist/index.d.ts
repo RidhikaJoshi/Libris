@@ -104,3 +104,26 @@ export declare const userSigninSchema: z.ZodObject<{
     password: string;
 }>;
 export type userSigninInfer = z.infer<typeof userSigninSchema>;
+export declare const transactionSchema: z.ZodObject<{
+    id: z.ZodString;
+    bookId: z.ZodString;
+    userId: z.ZodString;
+    issueDate: z.ZodString;
+    returnDate: z.ZodString;
+    status: z.ZodEnum<["ISSUED", "RETURNED", "LOST", "TAKEN"]>;
+}, "strip", z.ZodTypeAny, {
+    status: "ISSUED" | "RETURNED" | "LOST" | "TAKEN";
+    id: string;
+    bookId: string;
+    userId: string;
+    issueDate: string;
+    returnDate: string;
+}, {
+    status: "ISSUED" | "RETURNED" | "LOST" | "TAKEN";
+    id: string;
+    bookId: string;
+    userId: string;
+    issueDate: string;
+    returnDate: string;
+}>;
+export type transactionInfer = z.infer<typeof transactionSchema>;

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.userSigninSchema = exports.userSignupSchema = exports.bookUpdateSchema = exports.bookSchema = exports.adminSigninSchema = exports.adminSignupSchema = void 0;
+exports.transactionSchema = exports.userSigninSchema = exports.userSignupSchema = exports.bookUpdateSchema = exports.bookSchema = exports.adminSigninSchema = exports.adminSignupSchema = void 0;
 const zod_1 = require("zod");
 exports.adminSignupSchema = zod_1.z.object({
     email: zod_1.z.string().email(),
@@ -38,4 +38,12 @@ exports.userSignupSchema = zod_1.z.object({
 exports.userSigninSchema = zod_1.z.object({
     email: zod_1.z.string().email(),
     password: zod_1.z.string().min(6)
+});
+exports.transactionSchema = zod_1.z.object({
+    id: zod_1.z.string(),
+    bookId: zod_1.z.string(),
+    userId: zod_1.z.string(),
+    issueDate: zod_1.z.string(),
+    returnDate: zod_1.z.string(),
+    status: zod_1.z.enum(['ISSUED', 'RETURNED', 'LOST', 'TAKEN'])
 });

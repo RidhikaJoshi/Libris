@@ -54,7 +54,7 @@ export function CatalogPageComponent() {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8 sm:py-12 lg:py-16">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 sm:mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-500">Explore Our Library</h1>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-8 sm:mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-purple-500">Explore Libris</h1>
 
           {/* Search and Filter Section */}
           <div className="mb-8 sm:mb-12 flex flex-col sm:flex-row gap-4 sm:gap-6 items-center justify-center">
