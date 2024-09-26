@@ -244,7 +244,8 @@ router.put('/books/editDetails/:id',jwtVerify,async(c)=>
   const bookId=c.req.param('id');
   const body=await c.req.json();
  // console.log('Received body:', body);
-  const {success} =bookUpdateSchema.safeParse(body);
+  const {success,error} =bookUpdateSchema.safeParse(body);
+  console.log(error);
   if(!success)
   {
     c.status(400);
@@ -281,7 +282,7 @@ const editDetails=await prisma.books.update({
     category: body.category !== undefined ? body.category as Category : bookFound.category,
     totalCopies: body.totalCopies !== undefined ? parseInt(body.totalCopies as string) : bookFound.totalCopies,
     available: body.available !== undefined ? parseInt(body.available as string) : bookFound.available,
-    publication: typeof body.publication === 'number' ? body.publication : bookFound.publication,
+    publication:body.publication !== undefined ? parseInt(body.publication as string) : bookFound.publication,
     image: bookFound.image  // Assuming image isn't being updated
     
   }
