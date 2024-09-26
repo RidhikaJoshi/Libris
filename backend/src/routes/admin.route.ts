@@ -242,7 +242,8 @@ router.put('/books/editDetails/:id',jwtVerify,async(c)=>
   }).$extends(withAccelerate());
 
   const bookId=c.req.param('id');
-  const body=await c.req.parseBody();
+  const body=await c.req.json();
+ // console.log('Received body:', body);
   const {success} =bookUpdateSchema.safeParse(body);
   if(!success)
   {
@@ -269,20 +270,19 @@ router.put('/books/editDetails/:id',jwtVerify,async(c)=>
       data:null
     });
   }
-
 const editDetails=await prisma.books.update({
   where:{
     id:bookId
   },
   data:{
-    title:body.title as string || bookFound.title,
-    author: body.author as string || bookFound.author,
-    description: body.description as string || bookFound.description,
-    category: (body.category as Category) || bookFound.category,
-    totalCopies: parseInt(body.totalCopies as string) || bookFound.totalCopies,
-    available: parseInt(body.available as string) || bookFound.available,
+    title: body.title !== undefined ? body.title as string : bookFound.title,
+    author: body.author !== undefined ? body.author  as string: bookFound.author,
+    description: body.description !== undefined ? body.description  as string : bookFound.description,
+    category: body.category !== undefined ? body.category as Category : bookFound.category,
+    totalCopies: body.totalCopies !== undefined ? parseInt(body.totalCopies as string) : bookFound.totalCopies,
+    available: body.available !== undefined ? parseInt(body.available as string) : bookFound.available,
     publication: typeof body.publication === 'number' ? body.publication : bookFound.publication,
-    image:bookFound.image
+    image: bookFound.image  // Assuming image isn't being updated
     
   }
 });
