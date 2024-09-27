@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import { BookOpen, Plus, Edit, Search, BarChart, Users, Settings } from "lucide-react"
+import { BookOpen, Edit, BarChart, Users, Settings } from "lucide-react"
 import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import axios from 'axios'
@@ -251,9 +251,6 @@ export function AdminDashboard() {
    
     toast.success("Transaction updated successfully!")
   }
-  const handleCategoryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setBookCategory(event.target.value);
-  };
 
 
    const handleSignOut=()=>
