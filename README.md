@@ -11,6 +11,11 @@
 - **Book Issuing & Return:** Issue books online with clear due dates and return policies.
 - **User Dashboard:** Track issued books, due dates, and manage transactions.
 - **Transaction History:** View previous and current book transactions with detailed logs.
+  
+![image](https://github.com/user-attachments/assets/02dcfef6-d3ad-4ddf-9dd2-152b37a66bba)
+
+![image](https://github.com/user-attachments/assets/c7459597-97b6-4786-94a7-f885680e0914)
+
 
 ### Admin Features
   
@@ -18,15 +23,19 @@
 - **Transaction Management:** Monitor book issuance, returns, and overdue records with an easy-to-use admin dashboard.
 - **Fine Calculation:** Automatically calculate fines for overdue books based on custom rules.
 
-### 🛠️ Tech Stack
+![image](https://github.com/user-attachments/assets/242b01aa-8ec9-43fd-8c4b-6fcbf15c6144)
+![image](https://github.com/user-attachments/assets/9724db6e-f726-4688-82e8-d5c824a51cca)
 
-#### Frontend
+
+## 🛠️ Tech Stack
+
+### Frontend
 
 - **React.js:** A powerful JavaScript library for building the user interface.
 - **Tailwind CSS:** A utility-first CSS framework to design responsive and modern UI.
 - **ShadCN UI:** Pre-built components for clean and accessible user experiences.
   
-#### Backend
+### Backend
 
 - **Hono.js:** A lightweight web framework for building fast and scalable APIs.
 - **PostgreSQL:** A robust, open-source relational database for storing book and user data.
@@ -34,7 +43,7 @@
 - **TypeScript:** Type safety and autocompletion ensure fewer bugs and cleaner code.
 - **Zod:** Ensures data validation and type safety.
   
-#### Deployment
+### Deployment
 
 - **Cloudflare Workers:** Serverless hosting for efficient and scalable backend services.
 
