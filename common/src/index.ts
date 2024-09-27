@@ -64,8 +64,9 @@ export const transactionSchema=z.object({
     id:z.string(),
     bookId:z.string(),
     userId:z.string(),
-    issueDate:z.string(),
-    returnDate:z.string(),
+    issueDate: z.string().transform((dateStr) => new Date(dateStr)),
+    returnDate: z.string().transform((dateStr) => new Date(dateStr)),
+    Fine:z.number(),
     status:z.enum(['ISSUED', 'RETURNED', 'LOST','TAKEN'])
 });
 

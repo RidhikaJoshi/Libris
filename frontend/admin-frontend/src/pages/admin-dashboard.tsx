@@ -12,6 +12,7 @@ import "react-toastify/dist/ReactToastify.css"
 import axios from 'axios'
 import {bookInfer, transactionInfer} from '@ridhikajoshi/libris-common'
 import { Label } from "@radix-ui/react-label"
+import { format,parseISO, set} from 'date-fns';
 
 enum Category {
   FICTIONAL = "FICTIONAL",
@@ -22,6 +23,13 @@ enum Category {
   MATH = "MATH",
   PHILOSOPHY = "PHILOSOPHY",
   OTHER = "OTHER"
+}
+
+enum Status {
+  ISSUED = "ISSUED",
+  RETURNED = "RETURNED",  
+  LOST = "LOST",    
+  TAKEN = "TAKEN"
 }
 
 export function AdminDashboard() {
@@ -42,50 +50,39 @@ export function AdminDashboard() {
   const [bookName,setBookName]=useState("");
   const [file, setFile] = useState<File | undefined>(undefined);
 
-  useEffect(()=>{
-    const fetchBooks=async()=>
-    {
-      try{
-        const response=await axios.get('https://backend.libris.workers.dev/api/v1/admin/books');
-        if(!response)
-        {
-          toast.error('Error occurred while fetching books!');
-        }
-        setBooks(response.data.data);
-      }catch(error)
-      {
-        toast.error('Error occurred while fetching books!');
-      }
-    }
-    fetchBooks();
-  },[]);
+  const [transactionStatus,setTransactionStatus]=useState("ISSUED");
 
-  // useEffect(()=>{
-  //   const fetchTransactions=async()=>{
-  //     try{
-  //         const response=await axios.get(`https://backend.libris.workers.dev/api/v1/admin/transactions`,
-  //           {
-  //             headers:{
-  //               Authorization: `Bearer ${localStorage.getItem('token')}`
-  //             }
-  //           }
-  //         );
-  //         if(response && response.data)
-  //         {
-  //           setTransactions(response.data.data);
-  //         }
-  //         else
-  //         {
-  //           toast.error('Error occurred while fetching transactions!');
-  //         }
-  //     }catch(error)
-  //     {
-  //       toast.error('Error occurred while fetching transactions!');
-  //     }
-  //   }
-  //     fetchTransactions();
-  // },[isSignedIn==true]);
+  const [bookChanged,setBookChanged]=useState(false);
+  const [transactionChanged,setTransactionChanged]=useState(false);
  
+
+  useEffect(() => {
+    const fetchBooksAndTransactions = async () => {
+      try {
+        const booksResponse = await axios.get('https://backend.libris.workers.dev/api/v1/admin/books');
+        if (!booksResponse) {
+          toast.error('Error occurred while fetching books!');
+        } else {
+          setBooks(booksResponse.data.data);
+        }
+
+        if (isSignedIn) {
+          const transactionsResponse = await axios.get('https://backend.libris.workers.dev/api/v1/admin/transactions', {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+            },
+          });
+          if (transactionsResponse && transactionsResponse.data) {
+            setTransactions(transactionsResponse.data.data);
+          }
+        }
+      } catch (error) {
+        toast.error('Error occurred while fetching data!');
+      }
+    };
+
+    fetchBooksAndTransactions();
+  }, [isSignedIn,bookChanged,transactionChanged]);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -162,18 +159,19 @@ export function AdminDashboard() {
         }
       )
       console.log(response);
-      setBookAuthor("");
-      setBookTitle("");
-      setBookAvailable("");
-      setBookCategory("FICTIONAL");
-      setBookPublication("");
-      setBookTotalCopies("");
-      setDesc("");
+      setBookChanged(true);
       toast.success("Book added successfully!")
     }catch(error)
     {
       toast.error('Error occurred try again!');
     }
+    setBookAuthor("");
+    setBookTitle("");
+    setBookAvailable("");
+    setBookCategory("FICTIONAL");
+    setBookPublication("");
+    setBookTotalCopies("");
+    setDesc("");
    
   }
 
@@ -211,6 +209,7 @@ export function AdminDashboard() {
         toast.error('Error occurred try again!');
       }
       console.log("backend respone is",response);
+      setBookChanged(true);
       toast.success("Book updated successfully!");
     }catch(error)
     {
@@ -219,10 +218,43 @@ export function AdminDashboard() {
     
   }
 
-  const handleEditTransaction = (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleEditTransaction = (transactionId: string) => (e: React.FormEvent) => {
+    e.preventDefault();
+    try{
+        console.log(transactionStatus);
+        const response=axios.put(`https://backend.libris.workers.dev/api/v1/admin/return/${transactionId}`,
+        {
+          status: transactionStatus
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        }
+      );
+      if(!response)
+      {
+        toast.error('Error occurred try again!');
+      }
+      else
+      {
+        console.log("backend respone is",response);
+        setTransactionChanged(true);
+        toast.success("Transaction updated successfully!")
+        setTransactionStatus("ISSUED");
+      }
+    }
+    catch(error)
+    {
+      toast.error('Error occurred try again!');
+    }
+   
     toast.success("Transaction updated successfully!")
   }
+  const handleCategoryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setBookCategory(event.target.value);
+  };
+
 
    const handleSignOut=()=>
     {
@@ -287,7 +319,7 @@ export function AdminDashboard() {
       {/* Main Content */}
       <div className="flex">
         {/* Sidebar */}
-        <aside className="bg-gray-800 w-64 min-h-screen p-4 md:block hidden ">
+        <aside className="bg-gray-800 w-36 min-h-screen p-4 md:block hidden ">
           <nav>
             <ul className="space-y-2">
               <li>
@@ -461,38 +493,51 @@ export function AdminDashboard() {
                           <TableHead className="text-indigo-400">User ID</TableHead>
                           <TableHead className="text-indigo-400">Issue Date</TableHead>
                           <TableHead className="text-indigo-400">Return Date</TableHead>
+                          <TableHead className="text-indigo-400">Fine</TableHead>
                           <TableHead className="text-indigo-400">Status</TableHead>
                           <TableHead className="text-indigo-400">Action</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {transactions.map((transaction:transactionInfer) => (
+                        {transactions.map((transaction:transactionInfer) => {
+                          // console.log(transaction);
+                          return (
                           <TableRow key={transaction.id}>
                             <TableCell>{transaction.id}</TableCell>
                             <TableCell>{transaction.bookId}</TableCell>
                             <TableCell>{transaction.userId}</TableCell>
-                            <TableCell>{transaction.issueDate}</TableCell>
-                            <TableCell>{transaction.returnDate || "'Not returned'"}</TableCell>
+                            <TableCell>  {transaction.issueDate ? format(transaction.issueDate, 'yyyy-MM-dd') : 'Invalid Date'}</TableCell>
+                            <TableCell>{transaction.returnDate ? format(transaction.returnDate, 'yyyy-MM-dd') : 'Invalid Date'}</TableCell>
+                            <TableCell>{transaction.Fine}</TableCell>
                             <TableCell>{transaction.status}</TableCell>
                             <TableCell>
                               <Dialog>
                                 <DialogTrigger asChild>
-                                  <Button variant="outline" size="sm"><Edit className="h-4 w-4 mr-2" /> Edit</Button>
+                                  <Button variant="outline" size="sm" className="text-black"><Edit className="h-4 w-4 mr-2" /> Edit</Button>
                                 </DialogTrigger>
                                 <DialogContent className="bg-gray-800 text-white">
                                   <DialogHeader>
                                     <DialogTitle>Edit Transaction</DialogTitle>
                                   </DialogHeader>
-                                  <form onSubmit={handleEditTransaction} className="space-y-4">
-                                    <Input defaultValue={transaction.returnDate || "''"} placeholder="Return Date" className="bg-gray-700 text-white" />
-                                    <Input defaultValue={transaction.status} placeholder="Status" className="bg-gray-700 text-white" />
+                                  <form onSubmit={handleEditTransaction(transaction.id.toString())} className="space-y-4">
+                                  <Select value={transactionStatus} onValueChange={setTransactionStatus}> 
+                                    <SelectTrigger>{transactionStatus}</SelectTrigger>
+                                    <SelectContent>
+                                      {Object.values(Status).map((status) => (
+                                        <SelectItem key={status} value={status}>
+                                          {status}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                    
                                     <Button type="submit">Update Transaction</Button>
                                   </form>
                                 </DialogContent>
                               </Dialog>
                             </TableCell>
                           </TableRow>
-                        ))}
+                        )})}
                       </TableBody>
                     </Table>
                   </>
@@ -513,13 +558,13 @@ export function AdminDashboard() {
                   <Input placeholder="Title" className="bg-gray-700 text-white" value={bookTitle} onChange={(e)=>setBookTitle(e.target.value)}/>
                   <Input placeholder="Author" className="bg-gray-700 text-white" value={bookAuthor} onChange={(e)=>setBookAuthor(e.target.value)}/>
                   <Textarea placeholder="Description" className="bg-gray-700 text-white" value={desc} onChange={(e)=>setDesc(e.target.value)}/>
-                  <Select>
-                    <SelectTrigger className="bg-gray-700 text-white">
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
+                  <Select value={bookCategory} onValueChange={setBookCategory}>
+                    <SelectTrigger>{bookCategory}</SelectTrigger>
                     <SelectContent>
                       {Object.values(Category).map((category) => (
-                        <SelectItem key={category} value={category} onChange={(e)=>setBookCategory(category)}>{category}</SelectItem>
+                        <SelectItem key={category} value={category}>
+                          {category}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>

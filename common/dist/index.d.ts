@@ -108,16 +108,18 @@ export declare const transactionSchema: z.ZodObject<{
     id: z.ZodString;
     bookId: z.ZodString;
     userId: z.ZodString;
-    issueDate: z.ZodString;
-    returnDate: z.ZodString;
+    issueDate: z.ZodEffects<z.ZodString, Date, string>;
+    returnDate: z.ZodEffects<z.ZodString, Date, string>;
+    Fine: z.ZodNumber;
     status: z.ZodEnum<["ISSUED", "RETURNED", "LOST", "TAKEN"]>;
 }, "strip", z.ZodTypeAny, {
     status: "ISSUED" | "RETURNED" | "LOST" | "TAKEN";
     id: string;
     bookId: string;
     userId: string;
-    issueDate: string;
-    returnDate: string;
+    issueDate: Date;
+    returnDate: Date;
+    Fine: number;
 }, {
     status: "ISSUED" | "RETURNED" | "LOST" | "TAKEN";
     id: string;
@@ -125,5 +127,6 @@ export declare const transactionSchema: z.ZodObject<{
     userId: string;
     issueDate: string;
     returnDate: string;
+    Fine: number;
 }>;
 export type transactionInfer = z.infer<typeof transactionSchema>;

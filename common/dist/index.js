@@ -43,7 +43,8 @@ exports.transactionSchema = zod_1.z.object({
     id: zod_1.z.string(),
     bookId: zod_1.z.string(),
     userId: zod_1.z.string(),
-    issueDate: zod_1.z.string(),
-    returnDate: zod_1.z.string(),
+    issueDate: zod_1.z.string().transform((dateStr) => new Date(dateStr)),
+    returnDate: zod_1.z.string().transform((dateStr) => new Date(dateStr)),
+    Fine: zod_1.z.number(),
     status: zod_1.z.enum(['ISSUED', 'RETURNED', 'LOST', 'TAKEN'])
 });
