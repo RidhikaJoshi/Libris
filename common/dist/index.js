@@ -43,6 +43,8 @@ exports.transactionSchema = zod_1.z.object({
     id: zod_1.z.string(),
     bookId: zod_1.z.string(),
     userId: zod_1.z.string(),
+    bookName: zod_1.z.string(),
+    bookAuthor: zod_1.z.string(),
     Issue_date: zod_1.z.string().transform((dateStr) => new Date(dateStr)),
     Return_date: zod_1.z.string().transform((dateStr) => new Date(dateStr)),
     Fine: zod_1.z.number(),

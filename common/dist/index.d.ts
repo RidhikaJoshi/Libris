@@ -108,6 +108,8 @@ export declare const transactionSchema: z.ZodObject<{
     id: z.ZodString;
     bookId: z.ZodString;
     userId: z.ZodString;
+    bookName: z.ZodString;
+    bookAuthor: z.ZodString;
     Issue_date: z.ZodEffects<z.ZodString, Date, string>;
     Return_date: z.ZodEffects<z.ZodString, Date, string>;
     Fine: z.ZodNumber;
@@ -117,6 +119,8 @@ export declare const transactionSchema: z.ZodObject<{
     id: string;
     bookId: string;
     userId: string;
+    bookName: string;
+    bookAuthor: string;
     Issue_date: Date;
     Return_date: Date;
     Fine: number;
@@ -125,6 +129,8 @@ export declare const transactionSchema: z.ZodObject<{
     id: string;
     bookId: string;
     userId: string;
+    bookName: string;
+    bookAuthor: string;
     Issue_date: string;
     Return_date: string;
     Fine: number;

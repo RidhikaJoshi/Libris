@@ -267,6 +267,8 @@ router.post('/issue/:id', jwtVerify, async (c) => {
         data: {
           bookId: bookId,
           userId: userId,
+          bookName: book.title,
+          bookAuthor: book.author,
           Issue_date: new Date(),
           Return_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Return date set to 7 days later
           status: TransactionStatus.ISSUED,
@@ -286,7 +288,7 @@ router.post('/issue/:id', jwtVerify, async (c) => {
       // Return the transaction details if successful
       return transaction;
     });
-
+    //console.log(result);
     // Return a success response if the transaction succeeds
     c.status(200);
     return c.json({

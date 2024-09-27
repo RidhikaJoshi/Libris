@@ -60,6 +60,8 @@ model Transactions{
   id String @id @default(uuid())
   userId String
   bookId String
+  bookName String
+  bookAuthor String
   Issue_date DateTime
   Return_date DateTime
   Fine Int @default(0)

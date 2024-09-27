@@ -64,6 +64,8 @@ export const transactionSchema=z.object({
     id:z.string(),
     bookId:z.string(),
     userId:z.string(),
+    bookName:z.string(),
+    bookAuthor:z.string(),
     Issue_date: z.string().transform((dateStr) => new Date(dateStr)),
     Return_date: z.string().transform((dateStr) => new Date(dateStr)),
     Fine:z.number(),
