@@ -12,7 +12,7 @@ import "react-toastify/dist/ReactToastify.css"
 import axios from 'axios'
 import {bookInfer, transactionInfer} from '@ridhikajoshi/libris-common'
 import { Label } from "@radix-ui/react-label"
-import { format,parseISO, set} from 'date-fns';
+import { format} from 'date-fns';
 
 enum Category {
   FICTIONAL = "FICTIONAL",
@@ -500,14 +500,14 @@ export function AdminDashboard() {
                       </TableHeader>
                       <TableBody>
                         {transactions.map((transaction:transactionInfer) => {
-                          // console.log(transaction);
+                           
                           return (
                           <TableRow key={transaction.id}>
                             <TableCell>{transaction.id}</TableCell>
                             <TableCell>{transaction.bookId}</TableCell>
                             <TableCell>{transaction.userId}</TableCell>
-                            <TableCell>  {transaction.issueDate ? format(transaction.issueDate, 'yyyy-MM-dd') : 'Invalid Date'}</TableCell>
-                            <TableCell>{transaction.returnDate ? format(transaction.returnDate, 'yyyy-MM-dd') : 'Invalid Date'}</TableCell>
+                            <TableCell>{transaction.Issue_date ? format((transaction.Issue_date), 'yyyy-MM-dd') : 'Invalid Date'}</TableCell>
+                            <TableCell>{transaction.Return_date ? format(transaction.Return_date, 'yyyy-MM-dd') : 'Invalid Date'}</TableCell>
                             <TableCell>{transaction.Fine}</TableCell>
                             <TableCell>{transaction.status}</TableCell>
                             <TableCell>
