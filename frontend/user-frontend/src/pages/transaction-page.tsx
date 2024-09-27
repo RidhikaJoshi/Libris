@@ -6,18 +6,12 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import { format} from 'date-fns';
+import { transactionInfer} from '@ridhikajoshi/libris-common'
 
-interface Transaction {
-  id: string;
-  bookId: string;
-  issueDate: Date;
-  returnDate: Date;
-  Fine: number;
-  status: string;
-}
 
 export function TransactionPage() {
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [transactions, setTransactions] = useState<transactionInfer[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
@@ -106,12 +100,12 @@ export function TransactionPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredTransactions.map((transaction) => (
+              {filteredTransactions.map((transaction:transactionInfer) => (
                 <TableRow key={transaction.id} className="hover:bg-gray-700 transition-colors duration-200">
                   <TableCell className="font-medium">{transaction.id}</TableCell>
                   <TableCell>{transaction.bookId}</TableCell>
-                  <TableCell>{new Date(transaction.issueDate).toLocaleDateString()}</TableCell>
-                  <TableCell>{new Date(transaction.returnDate).toLocaleDateString()}</TableCell>
+                  <TableCell>{transaction.Issue_date ? format((transaction.Issue_date), 'yyyy-MM-dd') : 'Invalid Date'}</TableCell>
+                  <TableCell>{transaction.Return_date ? format(transaction.Return_date, 'yyyy-MM-dd') : 'Invalid Date'}</TableCell>
                   <TableCell>{transaction.Fine}</TableCell>
                   <TableCell>{transaction.status}</TableCell>
                 </TableRow>
