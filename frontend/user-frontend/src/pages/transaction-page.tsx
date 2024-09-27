@@ -92,7 +92,7 @@ export function TransactionPage() {
             <TableHeader>
               <TableRow>
                 <TableHead className="text-indigo-400">Transaction ID</TableHead>
-                <TableHead className="text-indigo-400">Book ID</TableHead>
+                <TableHead className="text-indigo-400">Book Name</TableHead>
                 <TableHead className="text-indigo-400">Issue Date</TableHead>
                 <TableHead className="text-indigo-400">Return Date</TableHead>
                 <TableHead className="text-indigo-400">Fine</TableHead>
@@ -103,7 +103,7 @@ export function TransactionPage() {
               {filteredTransactions.map((transaction:transactionInfer) => (
                 <TableRow key={transaction.id} className="hover:bg-gray-700 transition-colors duration-200">
                   <TableCell className="font-medium">{transaction.id}</TableCell>
-                  <TableCell>{transaction.bookId}</TableCell>
+                  <TableCell>{transaction.bookName}</TableCell>
                   <TableCell>{transaction.Issue_date ? format((transaction.Issue_date), 'yyyy-MM-dd') : 'Invalid Date'}</TableCell>
                   <TableCell>{transaction.Return_date ? format(transaction.Return_date, 'yyyy-MM-dd') : 'Invalid Date'}</TableCell>
                   <TableCell>{transaction.Fine}</TableCell>
