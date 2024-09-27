@@ -7,7 +7,7 @@
   "dependencies": {
     "@prisma/client": "^5.19.1",
     "@prisma/extension-accelerate": "^1.1.0",
-    "@ridhikajoshi/libris-common": "^1.1.2",
+    "@ridhikajoshi/libris-common": "^1.1.4",
     "hono": "^4.6.1",
     "prisma": "^5.19.1",
     "resend": "^4.0.0"
