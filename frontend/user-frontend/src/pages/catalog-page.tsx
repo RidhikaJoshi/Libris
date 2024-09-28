@@ -118,6 +118,7 @@ function BookCard({ title, author, description, category, totalCopies, available
       setIssue("Issuing...");
       if(!token){
         toast.error("Please login to issue books");
+        setIssue("Issue Book");
         return;
       }
       const allBooks=await axios.get('https://backend.libris.workers.dev/api/v1/users/books');

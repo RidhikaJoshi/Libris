@@ -12,7 +12,8 @@ import "react-toastify/dist/ReactToastify.css"
 import axios from 'axios'
 import {bookInfer, transactionInfer} from '@ridhikajoshi/libris-common'
 import { Label } from "@radix-ui/react-label"
-import { format} from 'date-fns';
+import { format, set} from 'date-fns';
+import Loader from './loader'
 
 enum Category {
   FICTIONAL = "FICTIONAL",
@@ -39,6 +40,8 @@ export function AdminDashboard() {
   const [name,setName]=useState("");
   const [books,setBooks]=useState([]);
   const [transactions, setTransactions] = useState([]);
+  const [loading,setLoading]=useState(true);
+  const [signin,setSignin]=useState("Sign in");
 
   const [bookTitle,setBookTitle]=useState("");
   const [bookAuthor,setBookAuthor]=useState("");
@@ -64,6 +67,8 @@ export function AdminDashboard() {
           toast.error('Error occurred while fetching books!');
         } else {
           setBooks(booksResponse.data.data);
+          setLoading(false);
+          
         }
 
         if (isSignedIn) {
@@ -86,6 +91,7 @@ export function AdminDashboard() {
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSignin("Signing in...");
     try
     {
       const response=await axios.post('https://backend.libris.workers.dev/api/v1/admin/signin',
@@ -108,6 +114,7 @@ export function AdminDashboard() {
     }
     setEmail("");
     setPassword("");
+    setSignin("Sign in");
   }
 
   const handleSignUp = async(e: React.FormEvent) => {
@@ -261,6 +268,12 @@ export function AdminDashboard() {
       toast.success("Signed out successfully!");
     }
 
+    if(loading)
+    {
+      return <Loader/>
+    }
+    else{
+
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100">
@@ -286,7 +299,7 @@ export function AdminDashboard() {
                   <form onSubmit={handleSignIn} className="space-y-4">
                     <Input type="email" placeholder="Email" className="bg-gray-700 text-white" value={email} onChange={(e)=>setEmail(e.target.value)}/>
                     <Input type="password" placeholder="Password" className="bg-gray-700 text-white" value={password} onChange={(e)=>setPassword(e.target.value)} />
-                    <Button type="submit">Sign In</Button>
+                    <Button type="submit">{signin}</Button>
                   </form>
                 </DialogContent>
               </Dialog>
@@ -586,4 +599,5 @@ export function AdminDashboard() {
       </div>
     </div>
   )
+}
 }
