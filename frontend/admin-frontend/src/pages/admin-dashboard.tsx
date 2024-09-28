@@ -12,7 +12,7 @@ import "react-toastify/dist/ReactToastify.css"
 import axios from 'axios'
 import {bookInfer, transactionInfer} from '@ridhikajoshi/libris-common'
 import { Label } from "@radix-ui/react-label"
-import { format, set} from 'date-fns';
+import { format} from 'date-fns';
 import Loader from './loader'
 
 enum Category {
