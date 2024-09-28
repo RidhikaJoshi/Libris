@@ -3,10 +3,13 @@ import {  Search, BookMarked, Users, BarChart, Zap, Shield } from "lucide-react"
 import { Link } from "react-router-dom"
 import axios from "axios"
 import { bookInfer } from '@ridhikajoshi/libris-common'
+import Loader from './loader'
+import { set } from "date-fns"
 
 
 export function HomePage() {
   const [allBooks, setAllBooks] = useState<bookInfer[]>([]);
+  const [loading,setLoading]=useState(true);
 
   useEffect(()=>
     {
@@ -21,12 +24,19 @@ export function HomePage() {
         const response = await axios.get('https://backend.libris.workers.dev/api/v1/users/books');
         console.log(response.data.data);
         setAllBooks(response.data.data);
+        setLoading(false);
       } catch(error) {
         console.log(error);
       }
     }
     fetchAllBooks();
   }, []);
+  if(loading)
+  {
+    return <Loader/>
+  }
+  else
+  {
 
   return (
     <div className="min-h-screen bg-gray-900 text-white mx-auto p-4">
@@ -114,6 +124,7 @@ export function HomePage() {
 
     </div>
   )
+}
 }
 
 function FeatureCard({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) {

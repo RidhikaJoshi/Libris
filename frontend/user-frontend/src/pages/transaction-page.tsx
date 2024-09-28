@@ -6,8 +6,9 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
-import { format} from 'date-fns';
+import { format, set} from 'date-fns';
 import { transactionInfer} from '@ridhikajoshi/libris-common'
+import Loader from './loader'
 
 
 export function TransactionPage() {
@@ -15,6 +16,7 @@ export function TransactionPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
+  const [loading,setLoading]=useState(true);
 
   useEffect(()=>
     {
@@ -43,6 +45,7 @@ export function TransactionPage() {
         });
         console.log(response);
         setTransactions(response.data.data);
+        setLoading(false);
       } catch (error) {
         console.error(error);
         toast.error("Error fetching transactions");
@@ -61,8 +64,12 @@ export function TransactionPage() {
       transaction.id.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+    if(loading)
+    {
+      return <Loader/>
+    }
   // If user is not authenticated, this block will be skipped due to navigation
-
+else{
   return isAuthenticated ? (
     <div className="min-h-screen bg-gray-900 text-gray-100">
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
@@ -115,5 +122,6 @@ export function TransactionPage() {
         </div>
       </main>
     </div>
-  ) : null; // Render nothing if not authenticated
+  ) : null;
+ } // Render nothing if not authenticated
 }

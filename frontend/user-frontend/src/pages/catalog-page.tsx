@@ -15,11 +15,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
+import Loader from "./loader"
 
 export function CatalogPageComponent() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [allBooks, setAllBooks] = useState<bookInfer[]>([]);
+  const [loading,setLoading]=useState(true);
 
   useEffect(()=>
     {
@@ -34,6 +36,7 @@ export function CatalogPageComponent() {
         const response = await axios.get('https://backend.libris.workers.dev/api/v1/users/books');
         console.log(response.data.data);
         setAllBooks(response.data.data);
+        setLoading(false);
       } catch(error) {
         console.log(error);
         toast.error("Error fetching books");
@@ -47,7 +50,12 @@ export function CatalogPageComponent() {
      book.author.toLowerCase().includes(searchQuery.toLowerCase())) &&
     (selectedCategory === "All" || book.category === selectedCategory)
   );
-
+  if(loading)
+  {
+    return <Loader />
+  }
+  else
+  {
   return (
     <div className="min-h-screen bg-gray-900 text-gray-100">
       <ToastContainer position="top-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
@@ -95,7 +103,9 @@ export function CatalogPageComponent() {
         </div>
       </main>
     </div>
+  
   )
+}
 }
 
 function BookCard({ title, author, description, category, totalCopies, available, image }: bookInfer ) {
