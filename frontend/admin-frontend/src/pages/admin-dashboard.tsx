@@ -303,22 +303,22 @@ export function AdminDashboard() {
                   </form>
                 </DialogContent>
               </Dialog>
-              <Dialog>
+                {/* <Dialog>
                 <DialogTrigger asChild>
                   <Button className='text-black font-bold' variant="outline">Sign Up</Button>
                 </DialogTrigger>
                 <DialogContent className="bg-gray-800 text-white">
                   <DialogHeader>
-                    <DialogTitle>Sign Up</DialogTitle>
+                  <DialogTitle>Sign Up</DialogTitle>
                   </DialogHeader>
                   <form onSubmit={handleSignUp} className="space-y-4">
-                    <Input type="text" placeholder="Name" className="bg-gray-700 text-white" value={name} onChange={(e)=>setName(e.target.value)}/>
-                    <Input type="email" placeholder="Email" className="bg-gray-700 text-white" value={email} onChange={(e)=>setEmail(e.target.value)}/>
-                    <Input type="password" placeholder="Password" className="bg-gray-700 text-white" value={password} onChange={(e)=>setPassword(e.target.value)} />
-                    <Button type="submit">Sign Up</Button>
+                  <Input type="text" placeholder="Name" className="bg-gray-700 text-white" value={name} onChange={(e)=>setName(e.target.value)}/>
+                  <Input type="email" placeholder="Email" className="bg-gray-700 text-white" value={email} onChange={(e)=>setEmail(e.target.value)}/>
+                  <Input type="password" placeholder="Password" className="bg-gray-700 text-white" value={password} onChange={(e)=>setPassword(e.target.value)} />
+                  <Button type="submit">Sign Up</Button>
                   </form>
                 </DialogContent>
-              </Dialog>
+                </Dialog> */}
             </div>
           ) : (
             <Button className='text-black font-bold' variant="outline" onClick={handleSignOut}>Sign Out</Button>
