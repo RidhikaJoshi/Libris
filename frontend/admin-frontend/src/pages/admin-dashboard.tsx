@@ -117,33 +117,33 @@ export function AdminDashboard() {
     setSignin("Sign in");
   }
 
-  const handleSignUp = async(e: React.FormEvent) => {
-    e.preventDefault();
-    try{
-      const response=await axios.post('https://backend.libris.workers.dev/api/v1/admin/signup',
-        {
-          email,password,
-          fullName:name
-        }
-      );
-      if(!response)
-      {
-        toast.error('Invalid credentials or user already exists');
-      }
-      localStorage.setItem('token',response.data.data);
-      localStorage.setItem('isUserLogged','true');
-      setIsSignedIn(true);
-      toast.success("Signed up successfully!");
+  // const handleSignUp = async(e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   try{
+  //     const response=await axios.post('https://backend.libris.workers.dev/api/v1/admin/signup',
+  //       {
+  //         email,password,
+  //         fullName:name
+  //       }
+  //     );
+  //     if(!response)
+  //     {
+  //       toast.error('Invalid credentials or user already exists');
+  //     }
+  //     localStorage.setItem('token',response.data.data);
+  //     localStorage.setItem('isUserLogged','true');
+  //     setIsSignedIn(true);
+  //     toast.success("Signed up successfully!");
 
-    }catch(error)
-    {
-      toast.error('Error occurred try again!');
-    }
-    setEmail("");
-    setPassword("");
-    setName("");
+  //   }catch(error)
+  //   {
+  //     toast.error('Error occurred try again!');
+  //   }
+  //   setEmail("");
+  //   setPassword("");
+  //   setName("");
    
-  }
+  // }
 
   const handleAddBook = async (e: React.FormEvent) => {
     e.preventDefault();
