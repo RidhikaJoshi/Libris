@@ -37,7 +37,7 @@ export function AdminDashboard() {
   const [isSignedIn, setIsSignedIn] = useState(localStorage.getItem('isUserLogged')=='true');
   const [email,setEmail]=useState("");
   const [password,setPassword]=useState("");
-  const [name,setName]=useState("");
+  // const [name,setName]=useState("");
   const [books,setBooks]=useState([]);
   const [transactions, setTransactions] = useState([]);
   const [loading,setLoading]=useState(true);
